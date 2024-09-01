@@ -1,13 +1,13 @@
-import './App.css'
+import RouteConfig from "./routes/RouteConfig";
+
+
 
 function App() {
-
-
   return (
     <>
-      <div className='text-3xl font-bold'>he loo beeeee in</div>
+    <RouteConfig/>
     </>
-  )
+  );
 }
 
 export default App
