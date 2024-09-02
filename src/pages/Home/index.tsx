@@ -1,8 +1,23 @@
 import React from 'react'
+import CarouselCustoms from '../../components/Home/Carousel'
 
 function HomePage() {
   return (
-    <div>HomePage</div>
+    <div>
+      {/* 
+        carousel 
+        category
+        product
+
+      
+      */}
+
+        <div className='mx-96  ' >
+        <CarouselCustoms/>
+
+        </div>
+      
+    </div>
   )
 }
 

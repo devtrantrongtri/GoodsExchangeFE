@@ -6,7 +6,7 @@ import Notification from './Notification'
 import HProfile from './HProfile'
 import HWishList from './HWishList'
 import { Tooltip } from 'react-tooltip';
-
+import { tippy } from '@tippyjs/react'
 
 function Header() {
   return (
