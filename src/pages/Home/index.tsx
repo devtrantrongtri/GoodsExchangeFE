@@ -14,7 +14,15 @@ function HomePage() {
 
         <div className='mx-96  ' >
         <CarouselCustoms/>
-
+        </div>
+        <div className='mx-96  ' >
+        <CarouselCustoms/>
+        </div>
+        <div className='mx-96  ' >
+        <CarouselCustoms/>
+        </div>
+        <div className='mx-96  ' >
+        <CarouselCustoms/>
         </div>
       
     </div>

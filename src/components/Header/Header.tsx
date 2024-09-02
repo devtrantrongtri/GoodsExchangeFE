@@ -7,10 +7,16 @@ import HProfile from './HProfile'
 import HWishList from './HWishList'
 import { Tooltip } from 'react-tooltip';
 import { tippy } from '@tippyjs/react'
+import { useScrollPosition } from '../../hooks/useScrollPosition'
 
 function Header() {
+  const scrollPosition = useScrollPosition()
+
+  // Adjust these thresholds and styles as needed
+  const isScrolled = scrollPosition > 200
+
   return (
-   <header className='flex flex-row px-12 py-10 border-b-2 shadow-2xl mb-4 '>
+   <header className={`fixed top-0 left-0 right-0 flex flex-row px-12 py-10 bg-white border-b-2  transition-all duration-300 ${isScrolled ? ' py-3 bg-opacity-90 shadow-2xl' : 'py-10 bg-opacity-100'} z-50 hover:py-8  hover:bg-opacity-100`}>
 
 
       <div className='basis-1/6 my-auto mx-1'
