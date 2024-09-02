@@ -29,11 +29,11 @@ function SearchBar() {
         </button>
 
       </form>
-      {showTooltip && (
+      {/* {showTooltip && (
         <div className="absolute top-full mt-2 w-40 p-2 bg-gray-700 text-white text-sm rounded-md shadow-lg">
           Nhập từ khóa để tìm kiếm
         </div>
-      )}
+      )} */}
     </div>
   );
 }

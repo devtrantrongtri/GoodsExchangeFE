@@ -12,7 +12,7 @@ function DefaultLayout({children} : {children: ReactNode} ) {
       </div>
 
       {/* Main content */}
-      <main className="flex-grow pt-40 bg-cyan-50">
+      <main className="flex-grow pt-32 bg-cyan-50">
         {children}
       </main>
 
