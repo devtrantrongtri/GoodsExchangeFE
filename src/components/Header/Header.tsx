@@ -6,28 +6,28 @@ import Notification from "./Notification";
 import HProfile from "./HProfile";
 import HWishList from "./HWishList";
 import { Tooltip } from "react-tooltip";
-import { tippy } from "@tippyjs/react";
+// import { tippy } from "@tippyjs/react";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
 
 function Header() {
   const scrollPosition = useScrollPosition();
-  const [isOverlayActive, setIsOverlayActive] = useState(false);
+  // const [isOverlayActive, setIsOverlayActive] = useState(false);
   // Adjust these thresholds and styles as needed
   const isScrolled = scrollPosition > 200;
 
   return (
     <div className="relative">
-      {isOverlayActive && (
+      {/* {isOverlayActive && (
         <div
           className="fixed inset-0 bg-gray-900 opacity-50 z-40"
           onClick={() => setIsOverlayActive(false)}
           aria-hidden="true"
         />
-      )}
+      )} */}
       <header
-        className={`fixed top-0 left-0 right-0 flex flex-row px-12 bg-white border-b-2  transition-all duration-300 ${
-          isScrolled ? " py-3 bg-opacity-90 shadow-2xl" : "py-10 bg-opacity-100"
-        } z-50 hover:py-12  hover:bg-opacity-100`}
+        className={`fixed top-0 left-0 right-0 flex flex-row px-12 bg-cyan-50  transition-all duration-100 ${
+          isScrolled ? " py-5 bg-cyan-100 shadow-2xl rounded-3xl" : "py-3 bg-opacity-100"
+        } z-50 `}
       >
         <div
           className="basis-1/6 my-auto mx-1"
@@ -39,11 +39,12 @@ function Header() {
 
         <div
           className="basis-3/6  w-full my-auto"
-          data-tooltip-id="my-tooltip"
+          // data-tooltip-id="my-tooltip"
           data-tooltip-content="Nhap tu khoa de tim kiem"
-          onFocus={() => setIsOverlayActive(true)}
-          onBlur={() => setIsOverlayActive(false)}
-          onClick={() => setIsOverlayActive(true)}
+          // onFocus={() => setIsOverlayActive(true)}
+          // onBlur={() => setIsOverlayActive(true)}
+          // onSubmit={() => setIsOverlayActive(false)}
+          // onClick={() => setIsOverlayActive(false)}
         >
           <SeachBar />
         </div>
@@ -78,7 +79,8 @@ function Header() {
             <HProfile />
           </div>
         </div>
-        <Tooltip id="my-tooltip" place="bottom" />
+        {/* xuw lys tool tip cho elements */}
+        <Tooltip id="my-tooltip" place="bottom" /> 
       </header>
     </div>
   );
