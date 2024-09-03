@@ -16,7 +16,7 @@ const publicRoute : RouteType[] = [
         component: ChatPage
     },
     {
-        path: "/ads",
+        path: "/ads", // trang hieenr thij casc thong tin sanr phamr nguoi dungf dax dang
         component: AdsPage
     }
 ]

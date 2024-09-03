@@ -4,3 +4,13 @@ export type CardPostProps = {
     price : number,
     datePost : string
 }
+
+export type ProductType = {
+    productId: number,
+    title: string,
+    description: string,
+    price: number,
+    status: string,
+    imageUrls: string[]
+}
+
