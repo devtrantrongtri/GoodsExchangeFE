@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Card, Button } from 'antd';
+import { Card, Button, } from 'antd';
 import { getRelativeTime } from '../../Util/getTimeCustom';
 import { ProductType } from '../../../types/Product/PostProb';
 import { Link } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
 
 const { Meta } = Card;
 
@@ -23,8 +24,8 @@ function CardPost({ product }: { product: ProductType }) {
 
   return (
     <div>
-      <Link to={'/product/' + product.productId}>
         
+      
         <Card
           hoverable
           style={{ width: 300, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}
@@ -54,8 +55,11 @@ function CardPost({ product }: { product: ProductType }) {
             </div>
           }
         >
+          <Link to={'/product/' + product.productId}>
           <Meta
-            className="font-semibold text-lg"
+          data-tooltip-id="my-tooltip"
+            data-tooltip-content="click to see more"
+            className="font-semibold text-lg hover:shadow-md rounded-3xl p-2"
             title={<div className="text-center">{product.title}</div>}
             description={
               <div className="flex justify-between items-center">
@@ -67,9 +71,10 @@ function CardPost({ product }: { product: ProductType }) {
                 </span>
               </div>
             }
-          />
+            />
+            </Link>
         </Card>
-      </Link>
+        <Tooltip id="my-tooltip" place="bottom" /> 
     </div>
   );
 }
