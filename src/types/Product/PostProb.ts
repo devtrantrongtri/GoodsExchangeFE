@@ -11,6 +11,7 @@ export type ProductType = {
     description: string,
     price: number,
     status: string,
+    create_at:number,
     imageUrls: string[]
 }
 
