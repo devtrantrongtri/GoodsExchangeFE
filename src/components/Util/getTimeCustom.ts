@@ -1,11 +1,13 @@
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
-
 dayjs.extend(relativeTime);
-export function getRelativeTime(timestamp : any) {
+
+export function getRelativeTime(timestamp: number) {
+  // Ensure the timestamp is treated as milliseconds
   const postDate = dayjs(timestamp);
   const now = dayjs();
+
   const diffInDays = now.diff(postDate, 'day');
 
   if (diffInDays < 1) {
@@ -20,4 +22,3 @@ export function getRelativeTime(timestamp : any) {
     return `${Math.floor(diffInDays / 365)} years ago`;
   }
 }
-  
