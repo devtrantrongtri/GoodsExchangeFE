@@ -17,8 +17,8 @@ interface UseAxiosResponse<T> {
     fetchData: (options: UseAxiosOptions) => void;
 }
 
-const useAxios = <T = GlobalResponse<any>>(): UseAxiosResponse<T> => {
-    const [response, setResponse] = useState<T | null>(null);
+const useAxios = <T = GlobalResponse<any>>(): UseAxiosResponse<GlobalResponse<T>> => {
+    const [response, setResponse] = useState<GlobalResponse<T> | null>(null);
     const [error, setError] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -49,13 +49,13 @@ const useAxios = <T = GlobalResponse<any>>(): UseAxiosResponse<T> => {
         }
     );
 
-    useEffect(() => {
-        const source: CancelTokenSource = axios.CancelToken.source();
+    // useEffect(() => {
+    //     const source: CancelTokenSource = axios.CancelToken.source();
 
-        return () => {
-            source.cancel('Component unmounted: Request cancelled.');
-        };
-    }, []);
+    //     return () => {
+    //         source.cancel('Component unmounted: Request cancelled.');
+    //     };
+    // }, []);
 
     const fetchData = async (options: UseAxiosOptions) => {
         setLoading(true);
@@ -64,7 +64,7 @@ const useAxios = <T = GlobalResponse<any>>(): UseAxiosResponse<T> => {
                 ...options,
                 cancelToken: axios.CancelToken.source().token,
             });
-            setResponse(result.data.data);
+            setResponse(result.data);
         } catch (error: unknown) {
             if (axios.isCancel(error)) {
                 console.log('Request cancelled');

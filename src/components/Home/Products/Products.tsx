@@ -32,8 +32,8 @@ function Products() {
             </h1>
              {loading && <LoadingPopup />}
             <div className='grid grid-cols-4 gap-8 min-h-60'>
-                {response && response.length > 0 ? (
-                    response.map((product) => (
+                {response && response.data.length > 0 ? (
+                    response.data.map((product) => (
                         <CardPost key={product.productId} product={product} />
                     ))
                 ) : (
