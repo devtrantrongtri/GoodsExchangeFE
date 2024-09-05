@@ -4,35 +4,39 @@ import { ProductType } from "../../types/Product/PostProb";
 import Tippy from "@tippyjs/react/headless";
 import Wrapper from "../Popper/Wrapper";
 import SearchProduct from "../Home/Products/SearchProduct";
+import useDebounce from "../../hooks/useDebounce";
 
 
 function SearchBar() {
   const { response, error, loading, fetchData } = useAxios<ProductType[]>();
   const [searchResult,setSearchResult] = useState<ProductType[]>([])
   const [searchValue,setSearchValue] = useState<string>('')
-
+  const debounceValue = useDebounce(searchValue,400)
   useEffect(() => {
-    if (searchValue.trim() === "") {
+    if (debounceValue.trim() === "") {
       setSearchResult([]);
       return;
     }
     const loadData = async () => {
       await fetchData({
-        url: `products/keyword/${searchValue}`,
+        url: `products/keyword/${debounceValue}`,
         method: "GET",
       });
 
     };
+    loadData();
+  }, [debounceValue]);
+
+  useEffect(()=>{
     if (response) {
       setSearchResult(response.data);
     }
-    loadData();
-  }, [searchValue]);
+  },[response])
 
-
-const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  setSearchValue(event.target.value);
-};
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const trimmedValue = event.target.value.trimStart();
+    setSearchValue(trimmedValue);
+  }
 
   return (
     <div className=" relative w-[48rem]" >
