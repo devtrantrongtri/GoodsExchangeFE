@@ -90,12 +90,16 @@ function SearchBar() {
                 <h3 className="font-bold p-4">Products</h3>
                 {searchResult.map((product, index) => (
                   <div
+                    onClick={() => {
+                      setSearchResult([])
+                      setSearchValue('')
+                    }}
                     key={index}
                     ref={index === activeIndex ? activeItemRef : null} // Gán ref cho mục đang được chọn
                     className={`p-2 cursor-pointer ${
                       index === activeIndex
                         ? "bg-slate-300 text-white"
-                        : "bg-white text-black"
+                        : "bg-white text-black hover:bg-slate-300"
                     }`}
                   >
                     <SearchProduct children={product} />

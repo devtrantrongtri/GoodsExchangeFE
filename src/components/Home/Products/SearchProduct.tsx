@@ -9,9 +9,9 @@ function SearchProduct({children}:{children : ProductType}) {
 
     
   return (
-    <Link to={'/product/' + children.productId}>
+    <Link to={'/product/productDetail/' + children.productId}>
         
-            <div className='p-3 w-full flex hover:bg-slate-300'>
+            <div className='p-3 w-full flex '>
                 <img className='rounded-full w-14 h-14 bg-slate-50' src={children.imageUrls[0]} alt="alt" />
                 <div className='ml-4'>
                     <h2 className='font-bold'>{children.title}</h2>
