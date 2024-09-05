@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { AdminPage } from "../pages";
 
-const AdminLayout = () => {
+const AdminLayout = ({children} : {children: ReactNode}) => {
   useEffect(() => {
     document.body.style.overflow = "hidden";
 
@@ -12,7 +12,7 @@ const AdminLayout = () => {
 
   return (
     <div className="flex flex-col h-[120vh] overflow-hidden">
-      <AdminPage />
+      {children}
     </div>
   );
 };

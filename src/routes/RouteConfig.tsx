@@ -4,14 +4,13 @@ import { publicRoute } from ".";
 import DefaultLayout from "../layouts/DefaultLayout";
 import { RouteType } from "../types";
 import NotFound from "../components/Util/NotFound";
-import AdminLayout from "../layouts/AdminLayout";
 
 const RouteConfig: React.FC = () => {
   return (
     <Routes>
       {publicRoute.map((route: RouteType, index: number) => {
-        const isAdmin = route.path.includes("/admin");
-        const Layout = isAdmin ? AdminLayout : route.layout || DefaultLayout;
+        // const isAdmin = route.path.includes("/admin");
+        const Layout = route.layout || DefaultLayout;
         const Component = route.component;
 
         return (

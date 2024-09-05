@@ -1,3 +1,4 @@
+import AdminLayout from "../layouts/AdminLayout";
 import { AdsPage, ChatPage, HomePage, ProfilePage } from "../pages";
 import AdminPage from "../pages/Admin";
 import { RouteType } from "../types";
@@ -22,7 +23,8 @@ const publicRoute : RouteType[] = [
     },
     {
         path: "/admin",
-        component: AdminPage
+        component: AdminPage,
+        layout : AdminLayout
     }
 ]
 

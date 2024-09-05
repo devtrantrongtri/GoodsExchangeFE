@@ -29,7 +29,7 @@ const useAxios = <T = GlobalResponse<any>>(): UseAxiosResponse<GlobalResponse<T>
 
     axiosInstance.interceptors.request.use(
         (config) => {
-            const token = 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3MjU1MTg0ODQsImV4cCI6MTcyNTUyMDI4NH0.klxLev0Z6tRTqYFoZh-S_bqfMK-DwuEDBE3AVf0IkKQ21YU1cjOz-zFjRVDPBivPjY90tUR1MtGgxcqYhweogg';
+            const token = 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3MjU1MzIyMDMsImV4cCI6MTcyNTcxMjIwM30.vPBeGEus4W62oTXzrk882m77AZo62-5b_TOZwaFHlchOLxGDrtxyXoQuMWVYzY8DaAMBvKcQhXSzIF2vY87KXw';
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
