@@ -13,7 +13,7 @@ function SearchBar() {
   const [searchValue, setSearchValue] = useState<string>("");
   const debounceValue = useDebounce(searchValue, 400);
   const [activeIndex, setActiveIndex] = useState<number>(-1); // Để lưu trữ chỉ mục hiện tại
-  const [isOpen, setIsOpen] = useState<boolean>(false); // Để kiểm soát mở/đóng Tippy
+  const [isOpen, setIsOpen] = useState<boolean>(true); // Để kiểm soát mở/đóng Tippy
   const activeItemRef = useRef<HTMLDivElement | null>(null); // Để tham chiếu đến mục đang được chọn
   const navigate = useNavigate(); // Hook để điều hướng
   useEffect(() => {
@@ -58,7 +58,7 @@ function SearchBar() {
     } else if (event.key === "Enter" && activeIndex >= 0) {
       const selectedProduct = searchResult[activeIndex];
       // Xử lý logic khi chọn sản phẩm
-      navigate(`/product/${selectedProduct.productId}`);
+      navigate(`/product/productDetail/${selectedProduct.productId}`);
       setIsOpen(false); // Đóng danh sách kết quả sau khi chọn
       event.preventDefault(); // Ngăn việc gửi form mặc định
     }
@@ -72,12 +72,18 @@ function SearchBar() {
       });
     }
   }, [activeIndex]);
+
+  const handleClickOutside = () => {
+    setIsOpen(false)
+  }
   return (
     <div className="relative w-[48rem]">
       <form action="" className="flex flex-row">
         <Tippy
           visible={!loading && searchResult.length > 0 && isOpen}
           interactive
+          onClickOutside={handleClickOutside}
+          
           render={(attrs) => (
             <div {...attrs}>
               <Wrapper>
@@ -106,6 +112,7 @@ function SearchBar() {
             value={searchValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown} // Lắng nghe sự kiện bàn phím
+            onFocus={() => setIsOpen(true)}
           />
         </Tippy>
 
