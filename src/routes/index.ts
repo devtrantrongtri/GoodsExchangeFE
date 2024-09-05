@@ -1,4 +1,5 @@
 import { AdsPage, ChatPage, HomePage, ProfilePage } from "../pages";
+import AdminPage from "../pages/Admin";
 import { RouteType } from "../types";
 
 
@@ -18,6 +19,10 @@ const publicRoute : RouteType[] = [
     {
         path: "/ads", // trang hieenr thij casc thong tin sanr phamr nguoi dungf dax dang
         component: AdsPage
+    },
+    {
+        path: "/admin",
+        component: AdminPage
     }
 ]
 
