@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios, { AxiosRequestConfig, AxiosResponse, CancelTokenSource, AxiosError } from 'axios';
 import { GlobalResponse } from '../types/GlobalReponse';
+const env = import.meta.env;
 
 
 // Define types for the API response, error, and options
@@ -24,7 +25,7 @@ const useAxios = <T = GlobalResponse<any>>(): UseAxiosResponse<GlobalResponse<T>
 
     // Create an Axios instance
     const axiosInstance = axios.create({
-        baseURL: 'http://localhost:8080/api/', // naof ranh tui se cap nhat .env
+        baseURL: env.VITE_BASE_URL // naof ranh tui se cap nhat .env
     });
 
     axiosInstance.interceptors.request.use(
