@@ -8,8 +8,8 @@ export const userApi = createApi({
         baseUrl : baseUrl,
         prepareHeaders: (headers) => {
             // Lấy token từ Redux state hoặc từ localStorage || mai mot se config to more productive
-            let token = localStorage.getItem('token'); // Hoặc từ state nếu lưu trong Redux
-            token = "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6InRyaSIsInN1YiI6InRyaSIsImlhdCI6MTcyNTY4MTAzMywiZXhwIjoxNzI1NjgyODMzfQ.Tb46MTPIDqW-O-at76NIk-n19gU0h8IU62yvlPPdHcG24pP29Ai8Z5Rs2jI363_3GpKVhseROLd-qUYzr7c5Wg";
+            const token = localStorage.getItem('token'); // Hoặc từ state nếu lưu trong Redux
+            // token = "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6InRyaSIsInN1YiI6InRyaSIsImlhdCI6MTcyNTY4MzYzOSwiZXhwIjoxNzI1Njg1NDM5fQ.bxhFL9xPNG_iB1xWNaOHV0VGv6obcjmag5ljwi5ZMrD1ONZP6qaipeDTyWojVMda5Lx5C2nG97vDcZP1L--82Q";
             // Nếu có token, thêm nó vào header
             if (token) {
               headers.set('Authorization', `Bearer ${token}`);

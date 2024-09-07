@@ -6,12 +6,12 @@ import { Link } from 'react-router-dom';
 import useForm from '../../hooks/useForm';
 
 
-// Định nghĩa kiểu dữ liệu cho phản hồi từ API
-interface ApiResponse {
-  code: number;
-  msg: string;
-  data: any;
-}
+// // Định nghĩa kiểu dữ liệu cho phản hồi từ API
+// interface ApiResponse {
+//   code: number;
+//   msg: string;
+//   data: string;
+// }
 
 const LoginForm: React.FC = () => {
 
@@ -23,7 +23,7 @@ const LoginForm: React.FC = () => {
   // State 
   const [errors, setErrors] = useState<string[]>([]);
   const navigate = useNavigate();
-  const { response, error, loading, fetchData } = useAxios<ApiResponse>();
+  const { response, error, loading, fetchData } = useAxios<string>();
 
   useEffect(() => {
     // Xử lý phản hồi API sau khi fetchData hoàn thành
@@ -31,7 +31,8 @@ const LoginForm: React.FC = () => {
       if (response.code === 200) {
         // Đăng nhập thành công - Chuyển hướng tới trang chính hoặc trang người dùng
         // TODO : se lam redux sau =)))))))))
-        console.log('Login successful:', response);
+        console.log('Login successful:', response.data);
+        localStorage.setItem('token', response.data);
         navigate("/"); 
       } else {
         // Xử lý lỗi khi phản hồi từ API cho biết đăng nhập thất bại
