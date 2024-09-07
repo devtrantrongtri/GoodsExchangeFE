@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import NoItemsMessage from '../../Util/NoItemsMessage';
 import ErrorPopup from '../../Util/ErrorPopup';
 import LoadingPopup from '../../Util/LoadingPopup';
+import SkeletonPost from './SkeletonPost';
 
 function Products() {
     const { response, error, loading, fetchData } = useAxios<ProductType[]>();
@@ -30,14 +31,16 @@ function Products() {
             <h1 className='font-bold text-2xl pt-6 mb-10'>
                 Tin đăng mới nhất
             </h1>
-             {loading && <LoadingPopup />}
-            <div className='grid grid-cols-4 gap-8 min-h-60'>
+             {loading && <LoadingPopup/>}
+            <div className='grid grid-cols-4 gap-8 min-h-96'>
                 {response && response.data.length > 0 ? (
                     response.data.map((product) => (
                         <CardPost key={product.productId} product={product} />
                     ))
                 ) : (
-                    <NoItemsMessage/>
+                    Array.from({ length: 16 }).map((_, index) => (
+                        <SkeletonPost key={index} />
+                    ))
                 )}
             </div>
             <div className="flex justify-end mt-7">

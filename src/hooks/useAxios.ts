@@ -79,7 +79,10 @@ const useAxios = <T = GlobalResponse<any>>(): UseAxiosResponse<GlobalResponse<T>
                 ...options,
                 cancelToken: axios.CancelToken.source().token,
             });
-            setResponse(result.data);
+            setTimeout(() => {
+                // setLoading(false);
+                setResponse(result.data);
+            }, 1000);
         } catch (error: unknown) {
             if (axios.isCancel(error)) {
                 console.log('Request cancelled');
@@ -91,7 +94,9 @@ const useAxios = <T = GlobalResponse<any>>(): UseAxiosResponse<GlobalResponse<T>
                 setError(typeof errorMessage === 'string' ? errorMessage : 'An unknown error occurred');
             }
         } finally {
-            setLoading(false);
+            setTimeout(() => {
+                setLoading(false);
+            }, 1000);
         }
     };
 
