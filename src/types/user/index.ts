@@ -26,4 +26,20 @@ export interface UserProfileResponse {
     address: string | null;
     createdAt: number[] | Date; // Mảng số hoặc Date object
   }
-  
+
+// Type cho thông tin của user
+export interface UserUpdateInfo {
+  email: string;
+  phoneNumber: string; // Thay đổi thành string để phù hợp với dữ liệu đầu vào (có thể là số hoặc chuỗi)
+  address: string;
+}
+
+// Type cho thông tin cập nhật profile
+export interface UpdateProfileRequest {
+  user: UserUpdateInfo;
+  bio: string | null;
+  profileImageUrl: string | null;
+  firstName: string | null;
+  lastName: string | null;
+}
+
