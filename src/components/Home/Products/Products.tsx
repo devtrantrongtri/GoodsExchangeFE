@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import CardPost from './CardPost';
-import { ProductType } from '../../../types/Product/PostProb';
+import { PaginatedProductsResponse, ProductResponse, ProductType } from '../../../types/Product/PostProb';
 import useAxios from '../../../hooks/useAxios';
 import { Link } from 'react-router-dom';
 import NoItemsMessage from '../../Util/NoItemsMessage';
@@ -9,21 +9,27 @@ import LoadingPopup from '../../Util/LoadingPopup';
 import SkeletonPost from './SkeletonPost';
 
 function Products() {
-    const { response, error, loading, fetchData } = useAxios<ProductType[]>();
+    const { response, error, loading, fetchData } = useAxios<PaginatedProductsResponse>();
 
     useEffect(() => {
         
         const loadData = async () => {
             await fetchData({
-                url: 'products/with-images',
-                method: 'GET',
+                url: 'products/getAllProductsWithImagesWithSortAndPaging',
+                method: 'POST',
+                data: {
+                    offset: 0,
+                    pageSize: 15,
+                    order: 'desc',
+                    field: 'createdAt'
+                }
             });
         };
 
         loadData(); 
     }, []); 
 
-
+    console.log(response)
 
     return (
         <div>
@@ -33,8 +39,8 @@ function Products() {
             </h1>
              {loading && <LoadingPopup/>}
             <div className='grid grid-cols-4 gap-8 min-h-96'>
-                {response && response.data.length > 0 ? (
-                    response.data.map((product) => (
+                {response && response.data.content.length > 0 ? (
+                    response.data.content.map((product) => (
                         <CardPost key={product.productId} product={product} />
                     ))
                 ) : (

@@ -29,16 +29,16 @@ function Header() {
     navigate('/auth/login');
   };
   useEffect(() => {
-    if ( !token) {
-      setIsAuthen(false);
+    if ( token) {
+      setIsAuthen(true);
     }else{
-      setIsAuthen(true)
+      setIsAuthen(false)
     }
   }, [token]);
 
 
   if (isLoading) return <Spin tip="Loading..." className="flex justify-center items-center h-screen" />;
-  if (isError) return <Alert message="Something went wrong." type="error" showIcon className="my-4" />;
+  // if (isError) return <Alert message="Something went wrong." type="error" showIcon className="my-4" />;
   // Define menu items for dropdown
 const dropdownMenu: MenuProps = {
   items: [
@@ -92,7 +92,7 @@ const dropdownMenu: MenuProps = {
 
         <div className="flex justify-end items-center space-x-4 basis-2/6 my-auto">
 
-          { isAuthen ? (<>
+          { isAuthen &&  !isError ? (<>
             <div
             className=""
             data-tooltip-id="my-tooltip"

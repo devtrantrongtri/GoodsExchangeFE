@@ -8,22 +8,22 @@ import LoadingPopup from "./components/Util/LoadingPopup";
 
 function App() {
   const navigate = useNavigate();
-  const { isError, isFetching, data } = useGetProfileQuery();
-  const token = localStorage.getItem('token')
+  // const { isError, isFetching, data } = useGetProfileQuery();
+  // const token = localStorage.getItem('token')
 
-  useEffect(() => {
-    if (isError || !data || !token) {
-      // Redirect to login page if there's an error or no token
-      navigate('/auth/login');
-    } else {
-      // If profile data is available and token exists, you might want to handle other logic here
-      console.log('User data:', data);
-    }
-  }, [isError, data, navigate]);
+  // useEffect(() => {
+  //   if (isError || !data || !token) {
+  //     // Redirect to login page if there's an error or no token
+  //     // navigate('/auth/login');
+  //   } else {
+  //     // If profile data is available and token exists, you might want to handle other logic here
+  //     console.log('User data:', data);
+  //   }
+  // }, [isError, data, navigate]);
 
-  if (isFetching) {
-    return <LoadingPopup/>;
-  }
+  // // if (isFetching) {
+  // //   return <LoadingPopup/>;
+  // // }
 
 
   return (

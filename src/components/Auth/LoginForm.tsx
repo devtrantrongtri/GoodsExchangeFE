@@ -24,14 +24,14 @@ const LoginForm: React.FC = () => {
   const [errors, setErrors] = useState<string[]>([]);
   const navigate = useNavigate();
   const { response, error, loading, fetchData } = useAxios<string>();
-
+  
   useEffect(() => {
     // Xử lý phản hồi API sau khi fetchData hoàn thành
     if (response) {
       if (response.code === 200) {
         // Đăng nhập thành công - Chuyển hướng tới trang chính hoặc trang người dùng
         // TODO : se lam redux sau =)))))))))
-        console.log('Login successful:', response.data);
+        // console.log('Login successful:', response.data);
         localStorage.setItem('token', response.data);
         navigate("/"); 
       } else {
@@ -47,6 +47,7 @@ const LoginForm: React.FC = () => {
       setErrors([error || 'An error occurred during login']);
     }
   }, [error]);
+
 
   // Hàm xử lý khi form được submit
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -76,6 +77,7 @@ const LoginForm: React.FC = () => {
       },
     };
 
+    
     // fect Data den API
     await fetchData(requestOptions);
   }

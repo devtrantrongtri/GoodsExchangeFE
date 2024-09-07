@@ -30,7 +30,7 @@ const useAxios = <T = GlobalResponse<any>>(): UseAxiosResponse<GlobalResponse<T>
 
     axiosInstance.interceptors.request.use(
         (config) => {
-            const token = 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3MjU1MzIyMDMsImV4cCI6MTcyNTcxMjIwM30.vPBeGEus4W62oTXzrk882m77AZo62-5b_TOZwaFHlchOLxGDrtxyXoQuMWVYzY8DaAMBvKcQhXSzIF2vY87KXw';
+            const token = localStorage.getItem('token')
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
