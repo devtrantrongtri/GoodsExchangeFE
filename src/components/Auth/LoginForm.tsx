@@ -24,7 +24,11 @@ const LoginForm: React.FC = () => {
   const [errors, setErrors] = useState<string[]>([]);
   const navigate = useNavigate();
   const { response, error, loading, fetchData } = useAxios<string>();
-  
+  useEffect(() => {
+    // Xóa token khi người dùng truy cập vào trang đăng nhập
+    localStorage.removeItem('token');
+  }, []);
+
   useEffect(() => {
     // Xử lý phản hồi API sau khi fetchData hoàn thành
     if (response) {

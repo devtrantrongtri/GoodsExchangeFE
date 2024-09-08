@@ -23,7 +23,7 @@ function App() {
       }
       refetch();
     }
-  }, [isError, token, navigate]);
+  }, [isError, token]);
 
   // Conditional rendering based on query states
   if (isFetching) {

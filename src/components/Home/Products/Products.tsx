@@ -29,7 +29,7 @@ function Products() {
         loadData(); 
     }, []); 
 
-    console.log(response)
+    // console.log(response)
 
     return (
         <div>
@@ -37,7 +37,7 @@ function Products() {
             <h1 className='font-bold text-2xl pt-6 mb-10'>
                 Tin đăng mới nhất
             </h1>
-             {loading && <LoadingPopup/>}
+             {/* {loading && <LoadingPopup/>} */}
             <div className='grid grid-cols-4 gap-8 min-h-96'>
                 {response && response.data.content.length > 0 ? (
                     response.data.content.map((product) => (

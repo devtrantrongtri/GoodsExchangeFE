@@ -9,7 +9,7 @@ import { Tooltip } from "react-tooltip";
 // import { tippy } from "@tippyjs/react";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
 import {  Alert, Button, Dropdown, Menu, MenuProps, Spin } from "antd";
-import {  MoreOutlined,  } from "@ant-design/icons";
+// import {  MoreOutlined,  } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useGetProfileQuery } from "../../services/user/user.service";
 
@@ -53,11 +53,16 @@ function Header() {
         >
           <Logo />
         </div>
-
+        <div className="basis-1/6 flex items-center justify-center font-bold space-x-5">
+        <Link to='/'>Home</Link>
+        <Link to='product/'>Explore</Link>
+        <Link to='https://github.com/devtrantrongtri'>Contact</Link>
+        </div>
         <div
-          className="basis-3/6  w-full my-auto"
+          className="basis-2/6  w-full my-auto"
           data-tooltip-content="Nhap tu khoa de tim kiem"
         >
+          
           <SeachBar />
         </div>
 
