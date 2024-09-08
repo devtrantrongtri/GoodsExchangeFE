@@ -82,6 +82,7 @@ const useAxios = <T = GlobalResponse<any>>(): UseAxiosResponse<GlobalResponse<T>
             setTimeout(() => {
                 // setLoading(false);
                 setResponse(result.data);
+                console.log(result.data);
             }, 1000);
         } catch (error: unknown) {
             if (axios.isCancel(error)) {

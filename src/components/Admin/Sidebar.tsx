@@ -16,6 +16,7 @@ import {
 } from "@ant-design/icons";
 import Dashboard from "./Dashboard.tsx";
 import User from "./User.tsx";
+import Product from "./Product.tsx";
 
 interface MenuItem {
   key: string;
@@ -33,6 +34,7 @@ const SideBar: React.FC = () => {
   const components: { [key: string]: JSX.Element } = {
     dashboard: <Dashboard />,
     user: <User />,
+    product: <Product />,
   };
 
   const items: MenuItem[] = [
@@ -93,15 +95,17 @@ const SideBar: React.FC = () => {
           className="mt-4"
         ></Menu>
 
-        <div className={`absolute bottom-4 left-0 w-full p-4 text-center bg-[#001529] text-white ${collapse ? "hidden" : ""}`}>
+        <div
+          className={`absolute bottom-4 left-0 w-full p-4 text-center bg-[#001529] text-white ${
+            collapse ? "hidden" : ""
+          }`}
+        >
           <p>Sign Out</p>
           <FaSignOutAlt />
         </div>
       </Sider>
 
-      <Layout
-        className={`transition-all duration-300 ml-[10px]`}
-      >
+      <Layout className={`transition-all duration-300 ml-[10px]`}>
         <Header className="gap-5 flex items-center bg-white p-0 text-left z-20 transition-all duration-300">
           <Button
             type="text"
@@ -132,7 +136,10 @@ const SideBar: React.FC = () => {
           </Space>
         </Header>
 
-        <Content className="p-5 overflow-y-auto transition-all duration-300">
+        <Content
+          className="p-5 overflow-y-auto transition-all duration-300"
+          style={{ maxHeight: "calc(100vh - 64px)" }}
+        >
           {components[currentComponent]}
         </Content>
       </Layout>

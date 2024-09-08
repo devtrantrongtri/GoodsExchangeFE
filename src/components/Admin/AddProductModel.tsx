@@ -1,46 +1,46 @@
 import React, { useState } from "react";
 import useAxios from "../../hooks/useAxios";
 
-type AddUserModalProps = {
+type AddProductModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onUserAdded: () => void;
+  onProductAdded: () => void;
 };
 
-type UserReq = {
-  username: string;
+type ProductReq = {
+  category_id: string;
   email: string;
   password: string;
   role: string;
 }
 
-const AddUserModal: React.FC<AddUserModalProps> = ({
+const AddProductModal: React.FC<AddProductModalProps> = ({
   isOpen,
   onClose,
-  onUserAdded,
+  onProductAdded,
 }) => {
-  const [username, setUsername] = useState("");
+  const [Productname, setProductname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
-  const { fetchData } = useAxios<UserReq>();
+  const { fetchData } = useAxios<ProductReq>();
 
   const handleSubmit = async () => {
     try {
       await fetchData({
-        url: "user/sign-up",
+        url: "Product/sign-up",
         method: "POST",
         data: {
-          username,
+          Productname,
           email,
           password,
           role,
         },
       });
-      onUserAdded();
+      onProductAdded();
       onClose();
     } catch (error) {
-      console.error("Error adding user:", error);
+      console.error("Error adding Product:", error);
     }
   };
 
@@ -49,15 +49,15 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-        <h2 className="text-lg font-bold mb-4">Add New User</h2>
+        <h2 className="text-lg font-bold mb-4">Add New Product</h2>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
-            Username
+            Productname
           </label>
           <input
             type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={Productname}
+            onChange={(e) => setProductname(e.target.value)}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
           />
         </div>
@@ -117,4 +117,4 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   );
 };
 
-export default AddUserModal;
+export default AddProductModal;

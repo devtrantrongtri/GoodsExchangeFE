@@ -3,6 +3,7 @@ import { AdsPage, ChatPage, HomePage, ProfilePage } from "../pages";
 import AdminPage from "../pages/Admin";
 import LoginPage from "../pages/Auth/LoginPage";
 import RegisterPage from "../pages/Auth/RegisterPage";
+import ProductPage from "../pages/Product";
 import { RouteType } from "../types";
 
 
@@ -35,6 +36,10 @@ const publicRoute : RouteType[] = [
     {
         path: "/auth/register",
         component: RegisterPage
+    },
+    {
+        path: "/product",
+        component: ProductPage
     }
 ]
 

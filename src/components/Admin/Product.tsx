@@ -1,57 +1,63 @@
 import React, { useEffect, useState } from "react";
 import useAxios from "../../hooks/useAxios";
-import AddUserModal from "./AddUserModle";
 import SkeletonLoader from "./SkeletonLoader";
 
-type UserData = {
-  userId: number;
-  username: string;
-  email: string;
-  password: string;
-  roles: string;
-  phoneNumber: string;
-  address: string;
-  createdAt: [number, number, number, number, number, number];
-};
+interface ProductData {
+  productId: number;
+  title: string;
+  description: string;
+  price: number;
+  status: "AVAILABLE" | "SOLD_OUT" | "DISCONTINUED";
+  created_at: number;
+  imageUrls: string[];
+}
 
-const User: React.FC = () => {
-  const { response, error, loading, fetchData } = useAxios<UserData[]>();
+const Product: React.FC = () => {
+  const { response, error, loading, fetchData } = useAxios<ProductData[]>();
   const [currentPage, setCurrentPage] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const usersPerPage = 10;
+  const [dataFetched, setDataFetched] = useState(false);
+  const productsPerPage = 10;
+
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        if (!dataFetched) {
+          await fetchData({
+            url: "products/with-images",
+            method: "GET",
+          });
+          setDataFetched(true);
+        }
+      } catch (err) {
+        console.error("Error fetching product data:", err);
+      }
+    };
+    fetchProductData();
+  }, [dataFetched, fetchData]);
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
     if (!selectAll) {
-      const allUserIds = (response?.data || []).map((user) => user.userId);
-      setSelectedUsers(allUserIds);
+      const allProductIds = (response?.data || []).map(
+        (product) => product.productId
+      );
+      setSelectedProducts(allProductIds);
     } else {
-      setSelectedUsers([]);
+      setSelectedProducts([]);
     }
   };
 
-  const toggleSelectUser = (userId: number) => {
-    if (selectedUsers.includes(userId)) {
-      setSelectedUsers(selectedUsers.filter((id) => id !== userId));
+  const toggleSelectProduct = (productId: number) => {
+    if (selectedProducts.includes(productId)) {
+      setSelectedProducts(selectedProducts.filter((id) => id !== productId));
     } else {
-      setSelectedUsers([...selectedUsers, userId]);
+      setSelectedProducts([...selectedProducts, productId]);
     }
   };
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!response) {
-        await fetchData({
-          url: "user/getAllUser",
-          method: "GET",
-        });
-      }
-    };
-    fetchUserData();
-  }, [fetchData, response]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < totalPages) {
@@ -59,42 +65,41 @@ const User: React.FC = () => {
     }
   };
 
-  const handleUserAdded = () => {
-    fetchData({ url: "user/getAllUser", method: "GET" });
+  const handleProductAdded = () => {
+    setDataFetched(false); // Reset the state to allow refetching
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(0);
+    setCurrentPage(0); // Reset page to 0 on search
   };
 
-  if (loading) return <SkeletonLoader />;
+  if (loading) return <SkeletonLoader/>;
   if (error) return <p>Error: {error}</p>;
 
-  const filteredUsers = (response?.data || []).filter((user) =>
-    user.username.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredProducts = (response?.data || []).filter((product) =>
+    product.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const indexOfLastUser = (currentPage + 1) * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  // Calculate pagination
+  const indexOfLastProduct = (currentPage + 1) * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
 
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  // Total number of pages
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-  const formatDate = (
-    createdAt: [number, number, number, number, number, number]
-  ) => {
-    const [year, month, day, hour, minute, second] = createdAt;
-    return new Date(
-      Date.UTC(year, month - 1, day, hour, minute, second)
-    ).toLocaleString();
+  const formatDateFromTimestamp = (timestamp: number) => {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleString();
   };
-  console.log(`Total pages: ${totalPages}`);
-  console.log(`Filtered users: ${filteredUsers.length}`);
-  console.log(`Current users: ${currentUsers.length}`);
+
   return (
     <div className="flex flex-col gap-0">
-      <h1 className="font-bold text-2xl">List user</h1>
+      <h1 className="font-bold text-2xl">List product</h1>
       <div className="flex mb-10">
         <form className="max-w-md mx-auto w-full">
           <label
@@ -127,7 +132,7 @@ const User: React.FC = () => {
               onChange={handleSearchChange}
               id="default-search"
               className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search user..."
+              placeholder="Search product..."
               required
             />
           </div>
@@ -138,7 +143,7 @@ const User: React.FC = () => {
           onClick={() => setIsModalOpen(true)}
           className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2 h-auto text-center me-2 mb-2"
         >
-          Add user
+          Add product
         </button>
       </div>
 
@@ -161,22 +166,19 @@ const User: React.FC = () => {
                 </div>
               </th>
               <th scope="col" className="px-6 py-3">
-                Username
+                Image
               </th>
               <th scope="col" className="px-6 py-3">
-                Email
+                Title
               </th>
               <th scope="col" className="px-6 py-3">
-                Password
+                Description
               </th>
               <th scope="col" className="px-6 py-3">
-                Roles
+                Price
               </th>
               <th scope="col" className="px-6 py-3">
-                Phone Number
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Address
+                Status
               </th>
               <th scope="col" className="px-6 py-3">
                 Created At
@@ -187,62 +189,69 @@ const User: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {currentUsers.map((user) => (
-              <tr
-                key={user.userId}
-                className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-              >
-                <td className="w-4 p-4">
-                  <div className="flex items-center">
-                    <input
-                      id={`checkbox-user-${user.userId}`}
-                      type="checkbox"
-                      checked={selectedUsers.includes(user.userId)}
-                      onChange={() => toggleSelectUser(user.userId)}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    />
-                    <label
-                      htmlFor="checkbox-table-search-1"
-                      className="sr-only"
+            {currentProducts.length > 0 ? (
+              currentProducts.map((product) => (
+                <tr
+                  key={product.productId}
+                  className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
+                >
+                  <td className="w-4 p-4">
+                    <div className="flex items-center">
+                      <input
+                        id={`checkbox-product-${product.productId}`}
+                        type="checkbox"
+                        checked={selectedProducts.includes(product.productId)}
+                        onChange={() => toggleSelectProduct(product.productId)}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      />
+                      <label
+                        htmlFor={`checkbox-product-${product.productId}`}
+                        className="sr-only"
+                      >
+                        checkbox
+                      </label>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4"><img src={product.imageUrls[0]} alt="" className="w-16 h-16"/></td>
+                  <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {product.title}
+                  </td>
+                  <td className="px-6 py-4">{product.description}</td>
+                  <td className="px-6 py-4">{product.price}</td>
+                  <td className="px-6 py-4">{product.status}</td>
+                  <td className="px-6 py-4">
+                    {formatDateFromTimestamp(product.created_at)}
+                  </td>
+                  <td className="px-6 py-4">
+                    <a
+                      href="#"
+                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                     >
-                      checkbox
-                    </label>
-                  </div>
-                </td>
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  {user.username}
-                </td>
-                <td className="px-6 py-4">{user.email}</td>
-                <td className="px-6 py-4">{user.password}</td>
-                <td className="px-6 py-4">{user.roles}</td>
-                <td className="px-6 py-4">{user.phoneNumber}</td>
-                <td className="px-6 py-4">{user.address}</td>
-                <td className="px-6 py-4">
-                  <td className="px-6 py-4">{formatDate(user.createdAt)}</td>
-                </td>
-                <td className="px-6 py-4">
-                  <a
-                    href="#"
-                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                  >
-                    Edit
-                  </a>
-                  <a
-                    href="#"
-                    className="font-medium text-red-600 dark:text-red-500 hover:underline ms-3"
-                  >
-                    Remove
-                  </a>
+                      Edit
+                    </a>
+                    <a
+                      href="#"
+                      className="font-medium text-red-600 dark:text-red-500 hover:underline ms-3"
+                    >
+                      Remove
+                    </a>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7} className="text-center py-4">
+                  No products found
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
 
-      <div
+      <nav
         aria-label="Page navigation example"
-        className={`mt-4 flex justify-end ${totalPages <= 1 ? "hidden" : ""}`}
+        className="mt-4 flex justify-end"
       >
         <ul className="inline-flex -space-x-px text-sm">
           <li>
@@ -287,15 +296,9 @@ const User: React.FC = () => {
             </button>
           </li>
         </ul>
-      </div>
-
-      <AddUserModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onUserAdded={handleUserAdded}
-      />
+      </nav>
     </div>
   );
 };
 
-export default User;
+export default Product;
