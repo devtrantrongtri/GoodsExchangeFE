@@ -3,28 +3,36 @@ import RouteConfig from "./routes/RouteConfig";
 import { useGetProfileQuery } from "./services/user/user.service";
 import { useNavigate } from "react-router-dom";
 import LoadingPopup from "./components/Util/LoadingPopup";
+import ErrorPopup from "./components/Util/ErrorPopup";
 
 
 
 function App() {
   const navigate = useNavigate();
-  // const { isError, isFetching, data } = useGetProfileQuery();
-  // const token = localStorage.getItem('token')
+  const token = localStorage.getItem('token');
 
-  // useEffect(() => {
-  //   if (isError || !data || !token) {
-  //     // Redirect to login page if there's an error or no token
-  //     // navigate('/auth/login');
-  //   } else {
-  //     // If profile data is available and token exists, you might want to handle other logic here
-  //     console.log('User data:', data);
-  //   }
-  // }, [isError, data, navigate]);
+  // Invoke the query hook at the top level
+  const { isError, isFetching, data,refetch } = useGetProfileQuery(undefined, {
+    skip: !token,  // Skip query if no token
+  });
 
-  // // if (isFetching) {
-  // //   return <LoadingPopup/>;
-  // // }
+  useEffect(() => {
+    if (token) {
+      if (isError) {
+        localStorage.removeItem('token');
+      }
+      refetch();
+    }
+  }, [isError, token, navigate]);
 
+  // Conditional rendering based on query states
+  if (isFetching) {
+    return <LoadingPopup />;
+  }
+
+  if (isError) {
+    return <ErrorPopup message="Error when getting your profile or expired token." />;
+  }
 
   return (
     <>

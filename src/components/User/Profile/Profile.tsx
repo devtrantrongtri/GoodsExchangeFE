@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useGetProfileQuery, useUpdateProfileMutation } from '../../../services/user/user.service';
 import { Card, Form, Input, Button, Avatar, Spin, Alert ,message, Select} from 'antd';
+import LoadingPopup from '../../Util/LoadingPopup';
 
 interface avartar {
         url: string;
@@ -11,7 +12,7 @@ interface avartar {
 const Profile: React.FC = () => {
 
   const { data: profileData, isLoading, isError,refetch } = useGetProfileQuery();
-  const [updateProfile] = useUpdateProfileMutation();
+  const [updateProfile,{error,data}] = useUpdateProfileMutation();
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const handleUpdate = async (values: any) => {
     try {
@@ -26,7 +27,14 @@ const Profile: React.FC = () => {
             firstName: values.firstName,
             lastName: values.lastName,
           }).unwrap();
-      message.success('Profile updated successfully!');
+      if(data){
+        if(data.code === 200) {
+          message.success('Profile updated successfully!');
+        }else{
+
+          message.error('Failed to update profile.' + data.msg);
+        }
+      }
       refetch();
     } catch (error) {
       console.error('Failed to update profile:', error);
@@ -34,7 +42,7 @@ const Profile: React.FC = () => {
     }
   };
 
-  if (isLoading) return <Spin tip="Loading..." className="flex justify-center items-center h-screen" />;
+  if (isLoading) return <LoadingPopup/>;
   if (isError) return <Alert message="Something went wrong." type="error" showIcon className="my-4" />;
 
   return (

@@ -17,17 +17,13 @@ function Header() {
   const scrollPosition = useScrollPosition();
   const [isAuthen, setIsAuthen] = useState(false);
   const isScrolled = scrollPosition > 200;
-  const { data: profileData, isLoading, isError,refetch } = useGetProfileQuery();
   const token = localStorage.getItem('token')
-  const navigate = useNavigate();
+  const { data: profileData, isLoading, isError,refetch } = useGetProfileQuery(undefined,{skip: !token, });
+  // const { isError, isFetching, data,refetch } = useGetProfileQuery(undefined, {
+  //    // Skip query if no token
+  // });
 
-  const handleLogout = () => {
-    // Clear the token from localStorage
-    localStorage.removeItem('token');
-
-    // Navigate to the login page
-    navigate('/auth/login');
-  };
+  
   useEffect(() => {
     if ( token) {
       setIsAuthen(true);
@@ -40,32 +36,7 @@ function Header() {
   if (isLoading) return <Spin tip="Loading..." className="flex justify-center items-center h-screen" />;
   // if (isError) return <Alert message="Something went wrong." type="error" showIcon className="my-4" />;
   // Define menu items for dropdown
-const dropdownMenu: MenuProps = {
-  items: [
-    {
-      key: '1',
-      label: <Link className="block px-4 py-2 text-gray-700 hover:bg-gray-100" to="/profile">Yout profile</Link>,
-    },
-    {
-      key: '2',
-      label: <Link className="block px-4 py-2 text-gray-700 hover:bg-gray-100" to="/contact">Contact</Link>,
-    },
-    {
-      key: '3',
-      label: <Link className="block px-4 py-2 text-gray-700 hover:bg-gray-100" to="/support">Support</Link>,
-    },
-    {
-      key: '4',
-      label: <button
-        onClick={handleLogout}
-        className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
-      >
-        Logout
-      </button>,
-    },
-  ],
 
-};
   return (
     <div className="relative">
       <header
@@ -116,8 +87,8 @@ const dropdownMenu: MenuProps = {
           </div>
           <div
             className=""
-            data-tooltip-id="my-tooltip"
-            data-tooltip-content="Your profile "
+            // data-tooltip-id="my-tooltip"
+            // data-tooltip-content="Your profile "
           >
          <HProfile
             avatar={
@@ -129,6 +100,7 @@ const dropdownMenu: MenuProps = {
                 : null
             }
       />
+          
 
           </div>
           </>) : (<>
@@ -139,9 +111,6 @@ const dropdownMenu: MenuProps = {
                 </Button>
               </Link>
           </>)}
-          <Dropdown menu={dropdownMenu} placement="bottom"  trigger={['hover']}>
-          <MoreOutlined  className="overflow-hidden text-3xl   py-5 font-bold" type="default"/>
-        </Dropdown>
         </div>
         {/* xuw lys tool tip cho elements */}
         <Tooltip id="my-tooltip" place="bottom" />
