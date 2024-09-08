@@ -34,9 +34,11 @@ function Header() {
 
 
   if (isLoading) return <Spin tip="Loading..." className="flex justify-center items-center h-screen" />;
-  // if (isError) return <Alert message="Something went wrong." type="error" showIcon className="my-4" />;
-  // Define menu items for dropdown
-
+  const getLinkClass = (path: string) => {
+    return location.pathname === path
+      ? 'text-[#0ea5e9] text-lg font-bold'
+      : 'text-black hover:text-[#0ea5e9]';
+  };
   return (
     <div className="relative">
       <header
@@ -53,10 +55,22 @@ function Header() {
         >
           <Logo />
         </div>
-        <div className="basis-1/6 flex items-center justify-center font-bold space-x-5">
-        <Link to='/'>Home</Link>
-        <Link to='product/'>Explore</Link>
-        <Link to='https://github.com/devtrantrongtri'>Contact</Link>
+        <div className="basis-1/6 flex items-center justify-center font-semibold space-x-5">
+          <Link to="/" className={getLinkClass('/')}>
+            Home
+          </Link>
+          <Link to="/product/" className={getLinkClass('/product/')}>
+            Explore
+          </Link>
+          <Link to="/contact/" className={getLinkClass('/contact/')}>
+            Contact
+          </Link>
+          {/* <a
+            href="https://github.com/devtrantrongtri"
+            className={location.pathname === 'https://github.com/devtrantrongtri' ? 'text-[#1e6668] font-semibold' : 'text-gray-600 hover:text-[#1e6668]'}
+          >
+            Contact
+          </a> */}
         </div>
         <div
           className="basis-2/6  w-full my-auto"

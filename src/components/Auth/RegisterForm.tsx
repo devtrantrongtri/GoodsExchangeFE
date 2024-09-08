@@ -64,6 +64,7 @@ const RegisterForm: React.FC = () => {
         notification.success({
           message: 'Registration Successful',
           description: 'You have registered successfully. Please log in.',
+          placement: 'top' 
         });
         resetForm();
         navigate("/auth/login");
@@ -72,6 +73,7 @@ const RegisterForm: React.FC = () => {
         notification.error({
           message: 'Registration Failed',
           description: response.msg || 'Registration failed. Please try again.',
+          placement: 'top' 
         });
       }
     }

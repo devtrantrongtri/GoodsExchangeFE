@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import useAxios from '../../hooks/useAxios';
 import { Link } from 'react-router-dom';
 import useForm from '../../hooks/useForm';
+import { notification } from 'antd';
 
 
 // // Định nghĩa kiểu dữ liệu cho phản hồi từ API
@@ -37,9 +38,19 @@ const LoginForm: React.FC = () => {
         // TODO : se lam redux sau =)))))))))
         // console.log('Login successful:', response.data);
         localStorage.setItem('token', response.data);
+        notification.success({
+          message: 'Login Successful',
+          description: 'Enjoy my app =))',
+          placement: 'top' 
+        });
         navigate("/"); 
       } else {
         // Xử lý lỗi khi phản hồi từ API cho biết đăng nhập thất bại
+        notification.error({
+          message: 'Login Failed',
+          description: 'poor you =))',
+          placement: 'top' 
+        })
         setErrors([response.msg || 'Login failed']);
       }
     }
