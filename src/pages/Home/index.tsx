@@ -25,12 +25,12 @@ function HomePage() {
         <div className='mx-80   my-40 ' >
         <Products/>
         </div>
-        <div className='mx-96  ' >
+        {/* <div className='mx-96  ' >
         <CarouselCustoms/>
         </div>
         <div className='mx-96  ' >
         <CarouselCustoms/>
-        </div>
+        </div> */}
       
     </div>
   )

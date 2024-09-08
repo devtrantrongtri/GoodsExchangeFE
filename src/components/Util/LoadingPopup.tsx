@@ -15,7 +15,7 @@ const LoadingPopup: React.FC = () => {
     if (!showPopup) return null; // Ẩn popup khi thời gian đã hết
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 z-50">
             <div className="ctn-preloader">
                 <div className="animation-preloader">
                     <div className="spinner"></div>

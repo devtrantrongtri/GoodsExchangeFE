@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useForm from "../../hooks/useForm";
 import useAxios from "../../hooks/useAxios";
+import { notification } from "antd";
 
 
 const RegisterForm: React.FC = () => {
@@ -48,17 +49,36 @@ const RegisterForm: React.FC = () => {
     };
 
     try {
-      await fetchData(requestOptions);
-      if (!error) {
-        // Đăng ký thành công - Chuyển hướng tới trang đăng nhập
-        resetForm();
-        navigate("/login");
-      }
+      fetchData(requestOptions);
+      
     } catch (err) {
       // Xử lý lỗi khi gửi yêu cầu
       setErrors([error || 'Loi o component Register Form =)) ']);
     }
   };
+
+  useEffect(() => {
+    if (response) {
+      if (response.code === 201) {
+        // Registration successful - Show success notification and redirect to login
+        notification.success({
+          message: 'Registration Successful',
+          description: 'You have registered successfully. Please log in.',
+          placement: 'top' 
+        });
+        resetForm();
+        navigate("/auth/login");
+      } else {
+        // Handle registration error based on response code
+        notification.error({
+          message: 'Registration Failed',
+          description: response.msg || 'Registration failed. Please try again.',
+          placement: 'top' 
+        });
+      }
+    }
+  }, [response, navigate]);
+
 
   return (
     <div className="bg-white bg-opacity-100 rounded-3xl shadow-2xl p-8 w-full max-w-md">
