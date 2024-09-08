@@ -55,7 +55,7 @@ function CardPost({ product }: { product: ProductType }) {
             </div>
           }
         >
-          <Link to={'/product/' + product.productId}>
+          <Link to={'/product/productDetail/' + product.productId}>
           <Meta
           data-tooltip-id="my-tooltip"
             data-tooltip-content="click to see more"

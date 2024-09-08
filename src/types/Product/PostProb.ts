@@ -37,6 +37,12 @@ interface Product {
     msg: string; // e.g., "success"
     data: ProductData;
   }
+
+  export interface ProductDetailResponse {
+    code: number; // e.g., 200
+    msg: string; // e.g., "success"
+    data: Product;
+  }
   // Định nghĩa kiểu dữ liệu cho thông tin phân trang
 interface Sort {
     sorted: boolean;

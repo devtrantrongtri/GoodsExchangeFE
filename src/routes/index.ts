@@ -1,5 +1,5 @@
 import AdminLayout from "../layouts/AdminLayout";
-import { AdsPage, ChatPage, HomePage, ProfilePage } from "../pages";
+import { AdsPage, ChatPage, HomePage, ProfilePage,ProductDetailPage } from "../pages";
 import AdminPage from "../pages/Admin";
 import LoginPage from "../pages/Auth/LoginPage";
 import RegisterPage from "../pages/Auth/RegisterPage";
@@ -40,7 +40,11 @@ const publicRoute : RouteType[] = [
     {
         path: "/product",
         component: ProductPage
-    }
+    },
+    {
+        path: "/product/productDetail/:id",
+        component: ProductDetailPage
+    },
 ]
 
 const privateRoute : RouteType[] = [
