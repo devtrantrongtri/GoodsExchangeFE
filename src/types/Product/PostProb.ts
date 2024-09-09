@@ -8,17 +8,20 @@ export type CardPostProps = {
 export type ProductType = {
   productId: number,
   seller: SellerType,
-  category: {
-    categoryId: number,
-    name: string,
-    categoryID: number,
-  },
+  category: CategoryType,
   title: string,
   description: string,
   price: number,
   status: string,
   create_at: number,
   imageUrls: string[]
+}
+
+// interface cát gô ry
+export interface CategoryType {
+  categoryID: number;
+  categoryId: number;
+  name: string;
 }
 
 // Type for individual product

@@ -6,6 +6,7 @@ import SkeletonPost from "../../components/Home/Products/SkeletonPost";
 import useAxios from "../../hooks/useAxios";
 import { ProductType } from "../../types/Product/PostProb";
 import Filter from "../../components/Product/Filter/Filter";
+import { useLocation } from "react-router-dom";
 
 function ProductPage() {
   const { response, error, loading, fetchData } = useAxios<ProductType[]>();
@@ -17,30 +18,41 @@ function ProductPage() {
   const [category, setCategory] = useState("");
   const [productName, setProductName] = useState("");
 
+  const location = useLocation();
+
   useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const categoryParam = queryParams.get("category");
+
+    if (categoryParam) {
+      setCategory(categoryParam);
+    }
+
     const fetchProductData = async () => {
-      try {
-        if (!dataFetched) {
-          await fetchData({
-            url: "products/with-images",
-            method: "GET",
-          });
-          setDataFetched(true);
-        }
-      } catch (err) {
-        console.error("Error fetching product data:", err);
+      if (!dataFetched) {
+        await fetchData({
+          url: "products/with-images",
+          method: "GET",
+        });
+        setDataFetched(true);
       }
     };
     fetchProductData();
-  }, [dataFetched, fetchData]);
+  }, [location.search]);
 
   // lọc
   const filteredProducts = response?.data.filter((product) => {
+    const isPriceFilterDisabled = minPrice === "0" && maxPrice === "0";
+
     const isWithinPriceRange =
-      (minPrice === "" || product.price >= Number(minPrice)) &&
-      (maxPrice === "" || product.price <= Number(maxPrice));
+      isPriceFilterDisabled ||
+      ((minPrice === "" || product.price >= Number(minPrice)) &&
+        (maxPrice === "" || product.price <= Number(maxPrice)));
+
     const matchesCategory =
-      category === "" ||  product.category.name.toLowerCase() === category.toLowerCase();
+      category === "" ||
+      product.category.name.toLowerCase() === category.toLowerCase();
+
     const matchesName =
       productName === "" ||
       product.title.toLowerCase().includes(productName.toLowerCase());

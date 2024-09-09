@@ -31,7 +31,7 @@ function ProductDetail() {
             title: <Link to="/"><HomeOutlined className="mr-1"/>Home</Link>,
           },
           {
-            title: <Link to={`/category/${productDetail.category.categoryID}`}>{productDetail.category.name}</Link>,
+            title: <Link to={`/product?category=${productDetail.category.name}`}>{productDetail.category.name}</Link>,
           },
           {
             title: productDetail.title,

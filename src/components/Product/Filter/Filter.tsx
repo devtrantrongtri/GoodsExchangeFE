@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import useAxios from "../../../hooks/useAxios";
+import { CategoryType } from "../../../types/Product/PostProb";
 
 interface FilterProps {
   minPrice: string;
@@ -13,11 +14,6 @@ interface FilterProps {
   setCategory: (value: string) => void;
   setProductName: (value: string) => void;
   onApplyFilters: () => void;
-}
-
-interface CategoryType {
-  categoryId: number;
-  name: string;
 }
 
 const Filter: React.FC<FilterProps> = ({
@@ -101,7 +97,11 @@ const Filter: React.FC<FilterProps> = ({
               >
                 <option value="">All Categories</option>
                 {categories.map((cat) => (
-                  <option key={cat.categoryId} value={cat.categoryId}>
+                  <option
+                    key={cat.categoryId}
+                    value={cat.name}
+                    selected={cat.name === category}
+                  >
                     {cat.name}
                   </option>
                 ))}

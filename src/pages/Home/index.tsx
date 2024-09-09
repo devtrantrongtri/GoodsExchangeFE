@@ -17,7 +17,7 @@ function HomePage() {
         <div className='mx-96  ' >
         <CarouselCustoms/>
         </div>
-        <div className='mx-96 my-20 bg-slate-50 h-40 rounded-2xl '>
+        <div className='mx-96 my-20 bg-slate-50 h-41 rounded-2xl '>
         <Narbar/>
 
         </div>
