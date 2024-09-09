@@ -1,6 +1,7 @@
 import React from 'react'
 
 function SellerInfor() {
+  
   return (
     <div>SellerInfor</div>
   )
