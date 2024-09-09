@@ -19,9 +19,9 @@ function ProductDetail() {
   const productDetail = data.data;
 
   return (
-    <div className='grid grid-cols-2 px-40'>
+    <div className='grid grid-cols-2 px-40 '>
       
-      <div className='bg-white'>
+      <div className='bg-white '>
     <ImageGallery imgs = {productDetail && productDetail.imageUrls}/>
       </div>
 
