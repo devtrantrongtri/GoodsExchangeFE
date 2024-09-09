@@ -25,7 +25,7 @@ function ProductDetail() {
     <ImageGallery imgs = {productDetail && productDetail.imageUrls}/>
       </div>
 
-      <div className='bg-black'>
+      <div className='bg-white'>
         <ProductInfor/>
       </div>
 
