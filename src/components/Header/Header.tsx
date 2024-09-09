@@ -113,8 +113,8 @@ function Header() {
             avatar={
               profileData
                 ? { 
-                    avartar: profileData.data.profileImageUrl || 'https://via.placeholder.com/150', // Provide default image URL
-                    name: profileData.data.firstName || 'NO user name' // Provide default name
+                    avartar: profileData.data.profileImageUrl || 'https://secure.gravatar.com/avatar/f53779b5676d15e4a7aeeef9c81fa564?s=70&d=wavatar&r=g', // Provide default image URL
+                    name: profileData.data.firstName || profileData.data.user.username // Provide default name
                   }
                 : null
             }
