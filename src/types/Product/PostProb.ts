@@ -46,7 +46,7 @@ export interface ProductResponse {
 export interface ProductDetailResponse {
   code: number; // e.g., 200
   msg: string; // e.g., "success"
-  data: Product;
+  data: ProductType;
 }
 // Định nghĩa kiểu dữ liệu cho thông tin phân trang
 interface Sort {
