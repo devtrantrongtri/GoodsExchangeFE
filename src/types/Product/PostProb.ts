@@ -7,15 +7,7 @@ export type CardPostProps = {
 // casi dungf chinhs home,productDetail,product page
 export type ProductType = {
   productId: number,
-  seller: {
-    userId: number;
-    username: string;
-    email: string;
-    roles: string; // "CLIENT"
-    phoneNumber: string;
-    address: string;
-    createdAt: [number, number, number, number, number, number]; // Year, Month, Day, Hour, Minute, Second
-  };
+  seller: SellerType,
   category: {
     categoryId: number,
     name: string,
@@ -51,11 +43,17 @@ export interface ProductResponse {
   msg: string; // e.g., "success"
   data: ProductData;
 }
-
+// get 1 san pham cu the
 export interface ProductDetailResponse {
   code: number; // e.g., 200
   msg: string; // e.g., "success"
   data: ProductType;
+}
+// dung cho get Post cua seller
+export interface ProductSellerResponse {
+  code: number; // e.g., 200
+  msg: string; // e.g., "success"
+  data: ProductType[];
 }
 // Định nghĩa kiểu dữ liệu cho thông tin phân trang
 interface Sort {
@@ -73,7 +71,7 @@ interface Pageable {
   unpaged: boolean;
 }
 export interface PaginatedProductsResponse {
-  content: Product[];
+  content: ProductType[];
   pageable: Pageable;
   last: boolean;
   totalElements: number;
@@ -85,3 +83,12 @@ export interface PaginatedProductsResponse {
   numberOfElements: number;
   empty: boolean;
 }
+export type SellerType = {
+  userId: number;
+  username: string;
+  email: string;
+  roles: string; // "CLIENT"
+  phoneNumber: string;
+  address: string;
+  createdAt: [number, number, number, number, number, number]; // Year, Month, Day, Hour, Minute, Second
+};

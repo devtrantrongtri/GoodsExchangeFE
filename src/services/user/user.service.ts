@@ -32,9 +32,12 @@ export const userApi = createApi({
                     body
                 }
             }
-        })
+        }),
+        getSellerProfile : build.query<UserProfileResponse,number>({
+            query : (id) => `userProfiles/${id}` // http:localhost:8080/api/userProfiles/1
+        }),
     })
 })
 
 // useGetProfileQuey dc RTK auto generate =))
-export const {useGetProfileQuery,useUpdateProfileMutation} = userApi
+export const {useGetProfileQuery,useUpdateProfileMutation,useGetSellerProfileQuery} = userApi

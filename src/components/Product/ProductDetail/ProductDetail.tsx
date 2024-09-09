@@ -22,9 +22,9 @@ function ProductDetail() {
   const productDetail = data.data;
 
   return (
-    <div className='grid grid-cols-2 px-40 '>
+    <div className='grid grid-cols-2 px-60 '>
       {/* Breadcrumb */}
-     <div className='col-span-2'>
+     <div className='col-span-2 '>
      <Breadcrumb
         items={[
           {
@@ -41,16 +41,16 @@ function ProductDetail() {
         className="mb-4 text-gray-600"
       />
      </div>
-      <div className='bg-white '>
+      <div className='bg-white  '>
     <ImageGallery imgs = {productDetail && productDetail.imageUrls}/>
       </div>
 
-      <div className='bg-white flex justify-center'>
+      <div className=' flex justify-center'>
         <ProductInfor productDetail = {productDetail} />
       </div>
 
-      <div className='bg-black col-span-2'>
-      <SellerInfor/>
+      <div className='col-span-2'>
+      <SellerInfor seller = {productDetail.seller}/>
       </div>
 
     </div>

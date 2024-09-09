@@ -51,7 +51,7 @@ const Profile: React.FC = () => {
       {profileData && (
         <div>
           <Card
-            cover={<Avatar size={128} src={profileData.data.profileImageUrl} className="mx-auto mt-4" />}
+            cover={<Avatar size={128} src={profileData.data.profileImageUrl || 'https://secure.gravatar.com/avatar/f53779b5676d15e4a7aeeef9c81fa564?s=70&d=wavatar&r=g'} className="mx-auto mt-4" />}
             className="mb-4"
           >
             <Form

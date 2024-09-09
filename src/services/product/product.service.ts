@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { ProductDetailResponse, ProductResponse } from '../../types/Product/PostProb';
+import { ProductDetailResponse, ProductResponse, ProductSellerResponse } from '../../types/Product/PostProb';
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
@@ -29,13 +29,17 @@ export const productApi = createApi({
         }),
         getProductDetail : build.query<ProductDetailResponse,string> ({
             query : (id) => `products/getProductDetail/${id}`
+        }),
+        getAllPosted : build.query<ProductSellerResponse,string> ({
+            query : (username) => `products/getAllProductByUsername/${username}`
         })
     }),
 });
 
 export const { 
     useGetAllProductsWithImagesWithSortAndPagingMutation,
-    useGetProductDetailQuery
+    useGetProductDetailQuery,
+    useGetAllPostedQuery
 
 
 } = productApi;

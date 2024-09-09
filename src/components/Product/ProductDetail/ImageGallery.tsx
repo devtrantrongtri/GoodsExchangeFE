@@ -12,8 +12,8 @@ const ImageGallery = ({ imgs }: { imgs: string[] }) => {
   };
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center">
+    <div className="w-full pt-10">
+      <div className="flex justify-between items-center ">
         {/* Mũi tên quay về */}
         <button
           onClick={() => carouselRef.current.prev()}

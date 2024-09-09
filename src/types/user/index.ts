@@ -21,11 +21,11 @@ export interface UserProfileResponse {
     userId: number;
     username: string;
     email: string;
-    roles: string;
-    phoneNumber: string | null;
-    address: string | null;
-    createdAt: number[] | Date; // Mảng số hoặc Date object
-  }
+    roles: string; // "CLIENT"
+    phoneNumber: string;
+    address: string;
+    createdAt: [number, number, number, number, number, number]; // Year, Month, Day, Hour, Minute, Second
+  };
 
 // Type cho thông tin của user
 export interface UserUpdateInfo {

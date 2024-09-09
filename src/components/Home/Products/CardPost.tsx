@@ -28,9 +28,9 @@ function CardPost({ product }: { product: ProductType }) {
       
         <Card
           hoverable
-          style={{ width: 300, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}
+          style={{ width: 340, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}
           cover={
-            <div className="relative flex items-center justify-center overflow-hidden" style={{ height: 200 }}>
+            <div className="relative flex items-center justify-center overflow-hidden" style={{ height: 260 }}>
               <img
                 alt={product.title}
                 src={product.imageUrls[currentImageIndex]}

@@ -25,34 +25,37 @@ const ProductInfor: React.FC<{ productDetail: ProductType }> = ({ productDetail 
 
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
-    return date.toLocaleDateString(); // Chuyển đổi timestamp sang định dạng ngày
+    const day = date.getDate().toString().padStart(2, '0'); // Lấy ngày và thêm 0 nếu cần
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Lấy tháng (cộng thêm 1 vì tháng bắt đầu từ 0)
+    const year = date.getFullYear(); // Lấy năm
+    return `${day}/${month}/${year}`; // Trả về chuỗi ngày theo định dạng dd/mm/yyyy
   };
+  
 
   return (
       <Badge.Ribbon text={status} color="green">
-    <div className="p-4 max-w-lg mx-auto bg-white shadow-lg rounded-lg">
+    <div className="p-10 w-[460px] mx-auto bg-white shadow-lg rounded-lg">
       {/* Product Name */}
       
-   
       <h1 className="text-xl font-bold text-gray-800">{title}</h1>
 
       {/* Category */}
-      <p className="text-sm text-gray-600">Loại: {category.name}</p>
+      <p className="text-lg text-gray-600">Loại: {category.name}</p>
 
       {/* Rating */}
       <div className="flex items-center mt-2">
         <Rate className="text-cyan-800" disabled allowHalf defaultValue={2.5} />
-        <span className="ml-2 text-sm text-gray-600">2.5 / 5</span>
+        <span className="ml-2 text-lg text-gray-600">2.5 / 5</span>
       </div>
 
       {/* Price */}
       <h2 className="mt-4 text-lg text-red-500 font-semibold">Giá: {price.toLocaleString()} VND</h2>
 
       {/* Product Status */}
-      <p className="text-sm text-gray-600">Trạng thái: <Badge count={status} showZero color="green" /></p>
+      <p className="text-lg text-gray-600">Trạng thái: <Badge count={status} showZero color="green" /></p>
       
       {/* Created At */}
-      <p className="text-sm text-gray-600">Ngày đăng: {formatDate(create_at)}</p>
+      <p className="text-lg text-gray-600">Ngày đăng:<Badge count={formatDate(create_at)} showZero color="blue" /> </p>
 
     
 
@@ -63,7 +66,7 @@ const ProductInfor: React.FC<{ productDetail: ProductType }> = ({ productDetail 
           className={`flex items-center gap-2 py-2 px-4 rounded-md text-white ${isWishlisted ? 'bg-red-500' : 'bg-gray-500'} hover:bg-red-600`}
         >
           <HeartOutlined />
-          {isWishlisted ? 'Đã thêm vào danh sách yêu thích' : 'Thêm vào danh sách yêu thích'}
+          {isWishlisted ? 'Đã yêu thích' : 'yêu thích'}
         </button>
 
         {/* Contact Button */}
@@ -77,8 +80,8 @@ const ProductInfor: React.FC<{ productDetail: ProductType }> = ({ productDetail 
 
       {/* Share Section */}
       <div className="flex items-center justify-between mt-4">
-        <h3 className="text-sm text-gray-600">Chia sẻ sản phẩm:</h3>
         <div className="flex space-x-4">
+        <h3 className="text-lg text-gray-600">Share:</h3>
           <button onClick={() => handleShare('facebook')} className="text-blue-600">
             <FacebookOutlined style={{ fontSize: '24px' }} />
           </button>
@@ -92,8 +95,7 @@ const ProductInfor: React.FC<{ productDetail: ProductType }> = ({ productDetail 
             <h1 className='font-bold text-black'>
               Description :
             </h1>
-            <p className="mt-2 text-gray-600 h-40 overflow-auto">Giải thích:
-Fake Data: Dữ liệu sản phẩm sản phẩm có được thêm sản p.</p>
+            <p className="mt-2 text-gray-600 h-40 overflow-auto">{productDetail.description}</p>
     </div>
 </Badge.Ribbon>
   );

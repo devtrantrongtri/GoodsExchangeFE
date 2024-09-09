@@ -3,9 +3,7 @@ import CardPost from './CardPost';
 import { PaginatedProductsResponse, ProductResponse, ProductType } from '../../../types/Product/PostProb';
 import useAxios from '../../../hooks/useAxios';
 import { Link } from 'react-router-dom';
-import NoItemsMessage from '../../Util/NoItemsMessage';
 import ErrorPopup from '../../Util/ErrorPopup';
-import LoadingPopup from '../../Util/LoadingPopup';
 import SkeletonPost from './SkeletonPost';
 
 function Products() {
