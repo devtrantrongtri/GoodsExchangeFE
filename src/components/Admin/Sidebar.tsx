@@ -72,7 +72,8 @@ const SideBar: React.FC = () => {
   return (
     <Layout className="min-h-screen">
       <Sider
-        className="bg-[#001529] fixed top-0 left-0 bottom-0 transition-all duration-300"
+        className="fixed top-0 left-0 bottom-0 transition-all duration-300"
+        style={{ backgroundColor: "rgb(207 250 254)" }}
         collapsed={collapse}
         collapsible
         trigger={null}
@@ -86,22 +87,23 @@ const SideBar: React.FC = () => {
         </div>
 
         <Menu
+          style={{
+            backgroundColor: "rgb(207 250 254)",
+            color: "black",
+          }}
           defaultSelectedKeys={["dashboard"]}
           mode="inline"
-          theme="dark"
           inlineCollapsed={collapse}
           items={items}
           onClick={(e) => setCurrentComponent(e.key)}
           className="mt-4"
-        ></Menu>
+        />
 
         <div
-          className={`absolute bottom-4 left-0 w-full p-4 text-center bg-[#001529] text-white ${
-            collapse ? "hidden" : ""
-          }`}
+          className={`flex items-center gap-4 absolute inset-x-2 bottom-12 mb-6 px-6 py-4 text-center justify-left bg-red-500 text-white transition-all duration-300 cursor-pointer rounded-lg hover:bg-white hover:text-red-500`}
         >
-          <p>Sign Out</p>
-          <FaSignOutAlt />
+          <FaSignOutAlt className="text-base" />
+          <p className={`${collapse ? "hidden" : ""} text-sm`}>Sign Out</p>
         </div>
       </Sider>
 

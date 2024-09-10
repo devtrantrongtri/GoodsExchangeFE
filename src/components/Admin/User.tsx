@@ -214,7 +214,25 @@ const User: React.FC = () => {
                 </td>
                 <td className="px-6 py-4">{user.email}</td>
                 <td className="px-6 py-4">{user.password}</td>
-                <td className="px-6 py-4">{user.roles}</td>
+                <td className="px-6 py-4">
+                  {user.roles.split(",").map((role, index) => {
+                    let color = "bg-blue-500";
+                    if (role.trim().toLowerCase() === "admin") {
+                      color = "bg-red-500";
+                    } else if (role.trim().toLowerCase() === "moderator") {
+                      color = "bg-green-500";
+                    }
+
+                    return (
+                      <span
+                        key={index}
+                        className={`inline-block px-2 py-1 my-1 text-xs font-semibold text-white rounded ${color}`}
+                      >
+                        {role.trim().toUpperCase()}
+                      </span>
+                    );
+                  })}
+                </td>
                 <td className="px-6 py-4">{user.phoneNumber}</td>
                 <td className="px-6 py-4">{user.address}</td>
                 <td className="px-6 py-4">

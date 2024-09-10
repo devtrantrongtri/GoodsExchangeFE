@@ -74,7 +74,7 @@ const Product: React.FC = () => {
     setCurrentPage(0); // Reset page to 0 on search
   };
 
-  if (loading) return <SkeletonLoader/>;
+  if (loading) return <SkeletonLoader />;
   if (error) return <p>Error: {error}</p>;
 
   const filteredProducts = (response?.data || []).filter((product) =>
@@ -212,13 +212,29 @@ const Product: React.FC = () => {
                       </label>
                     </div>
                   </td>
-                  <td className="px-6 py-4"><img src={product.imageUrls[0]} alt="" className="w-16 h-16"/></td>
+                  <td className="px-6 py-4">
+                    <img
+                      src={product.imageUrls[0]}
+                      alt=""
+                      className="w-16 h-16"
+                    />
+                  </td>
                   <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     {product.title}
                   </td>
                   <td className="px-6 py-4">{product.description}</td>
                   <td className="px-6 py-4">{product.price}</td>
-                  <td className="px-6 py-4">{product.status}</td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`inline-block px-2 py-1 my-1 text-xs font-semibold text-white rounded ${
+                        product.status.trim().toLowerCase() === "available"
+                          ? "bg-green-500"
+                          : "bg-red-500"
+                      }`}
+                    >
+                      {product.status}
+                    </span>
+                  </td>
                   <td className="px-6 py-4">
                     {formatDateFromTimestamp(product.created_at)}
                   </td>
