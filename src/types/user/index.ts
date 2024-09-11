@@ -43,3 +43,8 @@ export interface UpdateProfileRequest {
   lastName: string | null;
 }
 
+export interface UserSentListResponseType {
+  code: number;
+  msg: string;
+  data: UserProfile[];
+}

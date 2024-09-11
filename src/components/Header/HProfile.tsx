@@ -19,9 +19,9 @@ const HProfile = ({ avatar }: { avatar: AvatarProps | null }) => {
   const handleLogout = () => {
     // Clear the token from localStorage
     localStorage.removeItem('token');
-  
     // Navigate to the login page
     navigate('/auth/login');
+    window.location.reload();
   };
   const dropdownMenu: MenuProps = {
     items: [

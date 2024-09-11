@@ -1,5 +1,5 @@
 import {createApi,fetchBaseQuery} from '@reduxjs/toolkit/query/react'
-import { UpdateProfileRequest, UserProfileResponse } from '../../types/user'
+import { UpdateProfileRequest, User, UserProfileResponse, UserSentListResponseType } from '../../types/user'
 const baseUrl = import.meta.env.VITE_BASE_URL
 // create API by using RTK query
 export const userApi = createApi({
@@ -36,8 +36,11 @@ export const userApi = createApi({
         getSellerProfile : build.query<UserProfileResponse,number>({
             query : (id) => `userProfiles/${id}` // http:localhost:8080/api/userProfiles/1
         }),
+        getUserSent : build.query<UserSentListResponseType,void>({
+            query : () => `user/usersProfile/sent-messages` // http:localhost:8080/api/user/usersProfile/sent-messages
+        }),
     })
 })
 
 // useGetProfileQuey dc RTK auto generate =))
-export const {useGetProfileQuery,useUpdateProfileMutation,useGetSellerProfileQuery} = userApi
+export const {useGetProfileQuery,useUpdateProfileMutation,useGetSellerProfileQuery,useGetUserSentQuery} = userApi
