@@ -8,7 +8,7 @@ import { UserProfile } from '../../types/user';
 import { Avatar, List, notification, Spin } from 'antd';
 import { useGetMessagesQuery } from '../../services/chat/chat.service';
 import { MessageType } from '../../types/chat';
-
+import moment from 'moment'; 
 const DUMMY_USER_ID = 0;
 
 const Chat = () => {
@@ -150,15 +150,15 @@ const token = localStorage.getItem('token')
   }
 
   return (
-    <div className="h-screen bg-lime-500 flex flex-col overflow-hidden">
-      <div className="h-1/6 bg-blue-500">
+    <div className="h-screen bg-gradient-to-r from-cyan-500  flex flex-col overflow-hidden">
+      <div className="h-1/6 ">
         <Header />
       </div>
-      <div className="flex flex-1 bg-slate-500 h-[90%] pb-3">
+      <div className="flex flex-1 bg-cyan-700 h-[90%] pb-3">
         <Sidebar activeUserId={activeUserId} onUserSelect={handleUserSelect} userLists={userLists} />
-        <div className="w-3/4 h-full bg-red-600 flex flex-col">
+        <div className="w-3/4 h-full  flex flex-col">
           <UserInfo recipident={sellerProfile} />
-          <Messages messages={messages} lastMessageRef={lastMessageRef} />
+          <Messages messages={messages} lastMessageRef={lastMessageRef} sender = {UserData?.data} recipident={sellerProfile}  />
           <SendMessage
             message={message}
             setMessage={setMessage}
@@ -172,11 +172,11 @@ const token = localStorage.getItem('token')
 };
 
 const Sidebar = ({ activeUserId, onUserSelect, userLists }: { activeUserId: number | null, onUserSelect: (userId: number) => void, userLists: UserProfile[] | undefined }) => (
-  <div className="w-1/4 h-full bg-pink-800">
+  <div className="w-1/4 h-full bg-slate-900">
     <h1 className="h-[10%] bg-cyan-800 font-bold flex items-center justify-center">
       Danh sách User
     </h1>
-    <div className="h-[90%] bg-black overflow-auto">
+    <div className="h-[90%]  overflow-auto">
       {userLists && userLists.map((user) => {
         const userId = user.user.userId;
         const isActive = activeUserId === userId;
@@ -196,11 +196,11 @@ const Sidebar = ({ activeUserId, onUserSelect, userLists }: { activeUserId: numb
 );
 
 const UserInfo = ({ recipident }: { recipident: UserProfile | undefined }) => (
-  <div className="p-4 bg-blue-100 h-1/6">
-    <h3 className="text-lg font-semibold">Thông tin người dùng</h3>
-    <div className='flex space-x-10 p-3'>
+  <div className="p-4 bg-gradient-to-r from-cyan-500 shadow-md h-1/6">
+    <h3 className="text-2xl  font-semibold">Thông tin Seller</h3>
+    <div className='flex space-x-10 p-3 text-2xl'>
       <div>
-        <Avatar size={'large'} src={recipident?.profileImageUrl || "https://secure.gravatar.com/avatar/f53779b5676d15e4a7aeeef9c81fa564?s=70&d=wavatar&r=g"} alt="a" />
+        <Avatar className='w-16 h-16' size={'large'} src={recipident?.profileImageUrl || "https://secure.gravatar.com/avatar/f53779b5676d15e4a7aeeef9c81fa564?s=70&d=wavatar&r=g"} alt="a" />
       </div>
       <div>
         <p>Username: {recipident?.firstName} {recipident?.lastName}</p>
@@ -210,19 +210,53 @@ const UserInfo = ({ recipident }: { recipident: UserProfile | undefined }) => (
   </div>
 );
 
-const Messages = ({ messages, lastMessageRef }: { messages: MessageType[], lastMessageRef: React.RefObject<HTMLLIElement> }) => (
-  <ul className="flex-1 overflow-y-auto h-4/6 p-4">
-    {messages.map((msg, index) => (
-      <li
-        key={index}
-        className={`mb-2 p-2 bg-gray-200 rounded`}
-        ref={index === messages.length - 1 ? lastMessageRef : null}
-      >
-        {msg.content}
-      </li>
-    ))}
-  </ul>
-);
+const Messages = ({ messages, lastMessageRef, sender, recipident }: { messages: MessageType[], lastMessageRef: React.RefObject<HTMLLIElement>, sender: UserProfile | undefined, recipident: UserProfile | undefined }) => {
+  const userId = sender ? sender.user.userId : 0;
+
+  return (
+    <ul className="flex-1 overflow-y-auto h-4/6 p-4 space-y-2 ">
+      {messages.map((msg, index) => {
+        const isSender = msg.sender === userId;
+
+        return (
+          <li
+            key={index}
+            className={`flex items-start ${isSender ? 'justify-end' : 'justify-start'} space-x-3`}
+            ref={index === messages.length - 1 ? lastMessageRef : null}
+          >
+            {/* Avatar chỉ hiển thị cho người nhận */}
+            {!isSender && (
+              <Avatar
+                src={recipident ? recipident.profileImageUrl : `https://www.gravatar.com/avatar/${msg.sender}?d=robohash`} 
+                className="w-8 h-8"
+              />
+            )}
+            <div
+              className={`relative flex-1 max-w-xs p-3 rounded-lg shadow-2xl ${isSender ? 'bg-teal-900 text-white' : 'bg-teal-600 text-white'}`}
+            >
+              <div className="text-sm font-semibold mb-1">
+                {isSender ? 'You' : `User ${msg.sender}`}
+              </div>
+              <div className="text-sm mb-1 break-words">
+                {msg.content}
+              </div>
+              <div className="absolute bottom-2 right-2 text-xs text-black font-bold">
+                {moment(msg.createAt).format('DD MMM YYYY, HH:mm')}
+              </div>
+            </div>
+            {/* Avatar chỉ hiển thị cho người gửi */}
+            {isSender && (
+              <Avatar
+                src={sender ? sender.profileImageUrl : `https://www.gravatar.com/avatar/${msg.sender}?d=robohash`} 
+                className="w-8 h-8"
+              />
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
 
 const SendMessage = ({
   message,
@@ -235,15 +269,15 @@ const SendMessage = ({
   sendMessage: () => void;
   handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }) => (
-  <div className="p-4 bg-gray-100 flex items-center">
+  <div className="p-4 bg-gradient-to-r from-cyan-950 flex items-center">
     <textarea
-      className="flex-1 p-2 border rounded"
+      className="flex-1 p-2 border rounded bg-cyan-700 text-white text-2xl"
       value={message}
       onChange={(e) => setMessage(e.target.value)}
       onKeyDown={handleKeyDown}
       rows={2}
     />
-    <button onClick={sendMessage} className="ml-2 bg-blue-500 text-white p-2 rounded">
+    <button onClick={sendMessage} className="ml-2 bg-blue-500 text-white p-3 rounded hover:bg-blue-600 active:bg-cyan-600">
       Gửi
     </button>
   </div>

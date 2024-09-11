@@ -14,7 +14,7 @@ export const SocketProvider = ({ children} : {children: React.ReactNode}) => {
     const token = localStorage.getItem('token');
     const {data} = useGetProfileQuery(undefined,{skip : !token})
     const [stompClient,setStompClient] =  useState<StompJs.Client | null>(null);
-    
+    const [messageContext,setMessageContext] = useState('')
     
     const connectSocket =useCallback(()=>{
 
