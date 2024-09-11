@@ -4,6 +4,7 @@ import { useGetProfileQuery } from "./services/user/user.service";
 import { useNavigate } from "react-router-dom";
 import LoadingPopup from "./components/Util/LoadingPopup";
 import ErrorPopup from "./components/Util/ErrorPopup";
+import { SocketProvider } from "./contexts/SocketContext";
 
 
 
@@ -36,7 +37,9 @@ function App() {
 
   return (
     <>
+    <SocketProvider>
     <RouteConfig/>
+    </SocketProvider>
     </>
   );
 }
