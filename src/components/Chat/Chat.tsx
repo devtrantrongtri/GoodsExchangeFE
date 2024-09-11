@@ -8,19 +8,24 @@ import { UserProfile } from '../../types/user';
 import { Avatar, List } from 'antd';
 import { useGetMessagesQuery } from '../../services/chat/chat.service';
 import { MessageType } from '../../types/chat';
-
+const DUMMY_USER_ID = 0;
 const Chat = () => {
   // laay thong tin user tu state navigation bar
   const location = useLocation();
   const { recipient } = location.state || {};
   const [sellerInfor, setSellerInfor] = useState<SellerType>();
+  const [sellerProfile, setSellerProfile] = useState<UserProfile>();
   // render messages
   const [messages, setMessages] = useState<MessageType[]>([]);
+  const [sellerCache, setSellerCache] = useState<{[key: number]: UserProfile}>({}); // toi uu performance for not invented the wheel =)))
   const [message, setMessage] = useState('');
-  const [activeUserId, setActiveUserId] = useState<number | null>(recipient?.userId || null);
+  const [activeUserId, setActiveUserId] = useState<number>(recipient?.userId || DUMMY_USER_ID);
   const lastMessageRef = useRef<HTMLLIElement>(null); // Ref cho tin nhắn cuối
   const [userLists,setUserLists] = useState<UserProfile[]>();
-  const { data: profileData, isError: profileError, isLoading: profileLoading } = useGetSellerProfileQuery(recipient.userId);
+  const { data: profileData, isError: profileError, isLoading: profileLoading, refetch: refetchSellerProfile } = useGetSellerProfileQuery(activeUserId, {
+    skip: !activeUserId
+  });
+  
   const {data : UserData} = useGetProfileQuery();
 
   // Chỉ gọi useGetMessagesQuery khi có thông tin user và recipient
@@ -43,12 +48,6 @@ const Chat = () => {
 
     // lay ds usersent
     const {data} = useGetUserSentQuery();
-    console.log("usersent : ",data?.data)
-
-    console.log("recipident",recipient)
-
-    console.log(MessagesData)
-    console.log(UserData)
 
 
 
@@ -90,6 +89,23 @@ const Chat = () => {
     }
   }, [messages]);
 
+/*
+  cho nay dung de reusable data da get
+  Tái Sử Dụng Dữ liệu Cache: Nếu dữ liệu cho activeUserId đã có trong cache, 
+  thì dữ liệu được tái sử dụng bằng cách đặt sellerProfile với giá trị từ cache thay vì từ API.
+
+*/
+
+  useEffect(() => {
+    if (profileData && !sellerCache[activeUserId]) {
+      setSellerProfile(profileData.data);
+      setSellerCache(prev => ({ ...prev, [activeUserId]: profileData.data }));
+    } else if (sellerCache[activeUserId]) {
+      setSellerProfile(sellerCache[activeUserId]);
+    }
+  }, [profileData, activeUserId, sellerCache]);
+
+
   // logic cap nhat userlist
   useEffect(() => {
     if (data && recipient && profileData) {
@@ -97,7 +113,7 @@ const Chat = () => {
       const isUserInList = data?.data.some((user: UserProfile) => user.user.userId === profileData.data.user.userId);
       
       // Nếu không có thì thêm recipient vào danh sách
-      if (!isUserInList) {
+      if (!isUserInList && profileData.data.user.userId != UserData?.data.user.userId) {
         const newUserList = [...(data?.data || []), profileData.data];
         setUserLists(newUserList); // Cập nhật lại userList với người mới
       } else {
@@ -118,7 +134,7 @@ const Chat = () => {
       <div className="flex flex-1 bg-slate-500 h-[90%] pb-3">
       <Sidebar activeUserId={activeUserId} onUserSelect={handleUserSelect}  userLists={userLists}/>
         <div className="w-3/4 h-full bg-red-600 flex flex-col">
-          <UserInfo />
+          <UserInfo recipident={sellerProfile}/>
           {/* Truyền danh sách tin nhắn vào  */}
           <Messages messages={messages} lastMessageRef={lastMessageRef} />
           <SendMessage
@@ -158,11 +174,21 @@ const Sidebar = ({ activeUserId, onUserSelect, userLists }: { activeUserId: numb
 );
 
 
-const UserInfo = () => (
+const UserInfo = ({recipident} : {recipident : UserProfile | undefined}) => (
   <div className="p-4 bg-blue-100 h-1/6">
     <h3 className="text-lg font-semibold">Thông tin người dùng</h3>
-    <p>Username: John Doe</p>
-    <p>Email: john@example.com</p>
+    <div className='flex space-x-10 p-3'>
+
+    <div>
+    <Avatar size={'large'} src={recipident && recipident.profileImageUrl ? recipident.profileImageUrl :  "https://secure.gravatar.com/avatar/f53779b5676d15e4a7aeeef9c81fa564?s=70&d=wavatar&r=g"  } alt="a" />
+      {/* <img src={recipident && recipident.profileImageUrl ? recipident.profileImageUrl :  "https://secure.gravatar.com/avatar/f53779b5676d15e4a7aeeef9c81fa564?s=70&d=wavatar&r=g"  } alt="a" /> */}
+    </div>
+    <div>
+
+    <p>Username: {recipident && recipident.firstName + " " + recipident.lastName}</p>
+    <p>Email: {recipident && recipident.user.email}</p>
+    </div>
+    </div>
   </div>
 );
 
@@ -171,7 +197,7 @@ const Messages = ({ messages, lastMessageRef }: { messages: MessageType[], lastM
     {messages.map((msg, index) => (
       <li
         key={index}
-        className="mb-2 p-2 bg-gray-200 rounded"
+        className={`mb-2 p-2 bg-gray-200 rounded`}
         ref={index === messages.length - 1 ? lastMessageRef : null} // Gán ref cho tin nhắn cuối cùng
       >
         {msg.content}
