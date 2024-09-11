@@ -16,7 +16,7 @@ import { useGetProfileQuery } from "../../services/user/user.service";
 function Header() {
   const scrollPosition = useScrollPosition();
   const [isAuthen, setIsAuthen] = useState(false);
-  const isScrolled = scrollPosition > 200;
+  const isScrolled = scrollPosition > 50;
   const token = localStorage.getItem('token')
   const { data: profileData, isLoading, isError,refetch } = useGetProfileQuery(undefined,{skip: !token, });
   // const { isError, isFetching, data,refetch } = useGetProfileQuery(undefined, {
@@ -40,11 +40,11 @@ function Header() {
       : 'text-black hover:text-[#0ea5e9]';
   };
   return (
-    <div className="relative">
+    <div className="">
       <header
-        className={`fixed top-0 left-0 right-0 flex flex-row px-12 bg-cyan-50  transition-all duration-100 ${
+        className={`flex flex-row px-12 bg-cyan-50  transition-all duration-100 ${
           isScrolled
-            ? " py-5 bg-cyan-100 shadow-2xl rounded-3xl"
+            ? " py-5 bg-cyan-100 shadow-2xl rounded-3xl fixed top-0 left-0 right-0"
             : "py-3 bg-opacity-100"
         } z-50 `}
       >

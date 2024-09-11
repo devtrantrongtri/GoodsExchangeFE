@@ -1,4 +1,5 @@
 import AdminLayout from "../layouts/AdminLayout";
+import NoLayout from "../layouts/NoLayout";
 import { AdsPage, ChatPage, HomePage, ProfilePage,ProductDetailPage } from "../pages";
 import AdminPage from "../pages/Admin";
 import LoginPage from "../pages/Auth/LoginPage";
@@ -18,7 +19,8 @@ const publicRoute : RouteType[] = [
     },
     {
         path: "/chat",
-        component: ChatPage
+        component: ChatPage,
+        layout:NoLayout
     },
     {
         path: "/ads", // trang hieenr thij casc thong tin sanr phamr nguoi dungf dax dang

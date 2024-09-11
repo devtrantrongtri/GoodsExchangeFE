@@ -1,13 +1,14 @@
 import { HeartOutlined, WechatOutlined, FacebookOutlined, MessageOutlined } from '@ant-design/icons';
 import { Badge, Rate } from 'antd';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ProductDetailResponse, ProductType } from '../../../types/Product/PostProb';
+import { Link, useNavigate } from 'react-router-dom';
+import { ProductDetailResponse, ProductType, SellerType } from '../../../types/Product/PostProb';
  // Import kiểu ProductDetailResponse
 
 // Giả sử prop `productDetail` sẽ được truyền vào component này
 const ProductInfor: React.FC<{ productDetail: ProductType }> = ({ productDetail }) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const navigate = useNavigate();
 
   const handleAddToWishlist = () => {
     setIsWishlisted(!isWishlisted);
@@ -21,8 +22,10 @@ const ProductInfor: React.FC<{ productDetail: ProductType }> = ({ productDetail 
     }
   };
 
-  const { title, description, price, status, create_at, category } = productDetail;
+  // extract infor product from parent (productdetail)
+  const { title, description, price, status, create_at, category,seller } = productDetail;
 
+  // form date for product posted
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
     const day = date.getDate().toString().padStart(2, '0'); // Lấy ngày và thêm 0 nếu cần
@@ -31,6 +34,11 @@ const ProductInfor: React.FC<{ productDetail: ProductType }> = ({ productDetail 
     return `${day}/${month}/${year}`; // Trả về chuỗi ngày theo định dạng dd/mm/yyyy
   };
   
+
+  // logic chat hanle navigate
+  const handleChatClick = (seller : SellerType) => {
+    navigate('/chat', { state: { recipient: seller } });
+  };
 
   return (
       <Badge.Ribbon text={status} color="green">
@@ -70,12 +78,12 @@ const ProductInfor: React.FC<{ productDetail: ProductType }> = ({ productDetail 
         </button>
 
         {/* Contact Button */}
-        <Link to="/chat/user/">
-          <button className="flex items-center gap-2 py-2 px-4 rounded-md bg-blue-500 text-white hover:bg-blue-600">
+        {/* <Link to="/chat/user/"> */}
+          <button  onClick={() => handleChatClick(seller)} className="flex items-center gap-2 py-2 px-4 rounded-md bg-blue-500 text-white hover:bg-blue-600">
             <MessageOutlined /> 
             Chat với người bán
           </button>
-        </Link>
+        {/* </Link> */}
       </div>
 
       {/* Share Section */}
