@@ -27,9 +27,9 @@ export const SocketProvider = ({ children} : {children: React.ReactNode}) => {
 
                 // subcirbe 
 
-                client.subscribe(`/queue/${data.data.user.userId}`,(msg) => {
-                    console.log("Received private message:", msg);
-                })
+                // client.subscribe(`/queue/${data.data.user.userId}`,(msg) => {
+                //     console.log("Received private message:", msg);
+                // })
 
                 // client.subscribe
 

@@ -7,6 +7,13 @@ export interface MessageType  {
     createAt: string;
   }
 
+  export interface MessageSendType  {
+    sender: number;
+    recipient: number;
+    content: string;
+    messageType: string;
+  }
+
   // interface Message {
   //   messageId: number;
   //   sender: number;

@@ -9,9 +9,9 @@ import { Provider } from 'react-redux'
 createRoot(document.getElementById('root')!).render(
   <Router>
     <Provider store={store}>
-      <StrictMode>
+      {/* <StrictMode> */}
         <App />
-      </StrictMode>
+      {/* </StrictMode> */}
     </Provider>
   </Router>
 )

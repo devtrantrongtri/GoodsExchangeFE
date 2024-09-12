@@ -7,7 +7,7 @@ import { useGetProfileQuery, useGetSellerProfileQuery, useGetUserSentQuery } fro
 import { UserProfile } from '../../types/user';
 import { Avatar, List, notification, Spin } from 'antd';
 import { useGetMessagesQuery } from '../../services/chat/chat.service';
-import { MessageType } from '../../types/chat';
+import { MessageSendType, MessageType } from '../../types/chat';
 import moment from 'moment'; 
 const DUMMY_USER_ID = 0;
 
@@ -31,8 +31,9 @@ const Chat = () => {
   });
   
   const { data: UserData, isError: userError } = useGetProfileQuery();
+  const socket = useSocket();
   
-  const { data: MessagesData, error: messagesError, isLoading: messagesLoading } = useGetMessagesQuery(
+  const { data: MessagesData, error: messagesError, isLoading: messagesLoading ,refetch : refetchMessageList} = useGetMessagesQuery(
     { sender: UserData?.data?.user?.userId ?? 0, recipient: activeUserId ?? 0 },
     { skip: !UserData?.data?.user?.userId || !activeUserId }
   );
@@ -50,7 +51,34 @@ const token = localStorage.getItem('token')
     if (MessagesData) {
       setMessages(MessagesData);
     }
-  }, [MessagesData]);
+    if(socket && UserData?.data.user.userId){
+
+      socket.subscribe(`/queue/${UserData.data.user.userId}`,(msg) => {
+            console.log("Received private message:", msg);
+            const content : MessageSendType = JSON.parse(msg.body)
+            console.log("content : ",content)
+            const newMessage: MessageType = {
+              messageId: Date.now(),
+              recipient: content.recipient,
+              sender: content.sender ?? 0,
+              content: content.content,
+              messageType: 'text', // Hoặc loại tin nhắn khác nếu cần
+              createAt: new Date().toISOString(), // Thời gian tạo tin nhắn
+            };
+            if(activeUserId === content.recipient){
+              setMessages((pre)=>[...pre,newMessage])
+            }else{
+              console.log("Notifi : you recei a message from ",content.sender )
+              notification.info({
+                message: 'New message',
+                description: 'cos tin nhawns mowis kia =)))',
+                placement: 'top'
+              })
+            }
+        })
+      }
+
+  }, [socket,Messages,activeUserId]);
 
   useEffect(() => {
     if (profileError || messagesError || userError) {
@@ -71,7 +99,6 @@ const token = localStorage.getItem('token')
 
   const { data } = useGetUserSentQuery();
 
-  const socket = useSocket();
 
   useEffect(() => {
     if (recipient) {
@@ -81,8 +108,16 @@ const token = localStorage.getItem('token')
   }, [recipient]);
 
   const sendMessage = () => {
-    if (socket && sellerInfor && message.trim()) {
-      socket.send(`/app/chatwith/${sellerInfor.userId}`, {}, message);
+    if (socket && sellerProfile && message.trim()) {
+      console.log("activeUserId : " , activeUserId)
+      const messres : MessageSendType = {
+        sender: UserData?.data?.user?.userId ?? 0,
+        recipient: activeUserId,
+        content: message,
+        messageType: 'TEXT',
+      }
+
+      socket.send(`/app/chatwith/${activeUserId}`, {}, JSON.stringify(messres));
       setMessage('');
     }
   };
@@ -96,12 +131,12 @@ const token = localStorage.getItem('token')
   
         // Tạo đối tượng tin nhắn mới
         const newMessage: MessageType = {
-          messageId: Date.now(), // Sử dụng timestamp làm ID tin nhắn (có thể thay đổi)
+          messageId: Date.now(), 
           sender: UserData?.data?.user?.userId ?? 0,
           recipient: activeUserId,
           content: message,
-          messageType: 'text', // Hoặc loại tin nhắn khác nếu cần
-          createAt: new Date().toISOString(), // Thời gian tạo tin nhắn
+          messageType: 'TEXT', 
+          createAt: new Date().toISOString(),
         };
   
         // Cập nhật danh sách tin nhắn
@@ -139,7 +174,14 @@ const token = localStorage.getItem('token')
         setUserLists(data.data);
       }
     }
-  }, [data, recipient, profileData, UserData]);
+
+    
+  }, [data, recipient, profileData, UserData,userLists]);
+
+  useEffect(() => {
+    refetchMessageList();
+
+  },[activeUserId])
 
   const handleUserSelect = (userId: number) => {
     setActiveUserId(userId);
