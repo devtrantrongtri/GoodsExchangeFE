@@ -105,7 +105,7 @@ const token = localStorage.getItem('token')
       console.log('Chatting with recipient:', recipient.name);
       setSellerInfor(recipient);
     }
-  }, [recipient]);
+  }, [recipient,activeUserId]);
 
   const sendMessage = () => {
     if (socket && sellerProfile && message.trim()) {
@@ -155,6 +155,8 @@ const token = localStorage.getItem('token')
   }, [messages]);
 
   useEffect(() => {
+    refetchMessageList();
+
     if (profileData && !sellerCache[activeUserId]) {
       setSellerProfile(profileData.data);
       setSellerCache(prev => ({ ...prev, [activeUserId]: profileData.data }));
@@ -178,10 +180,10 @@ const token = localStorage.getItem('token')
     
   }, [data, recipient, profileData, UserData,userLists]);
 
-  useEffect(() => {
-    refetchMessageList();
+  // useEffect(() => {
+  //   refetchMessageList();
 
-  },[activeUserId])
+  // },[activeUserId])
 
   const handleUserSelect = (userId: number) => {
     setActiveUserId(userId);
@@ -199,7 +201,7 @@ const token = localStorage.getItem('token')
       <div className="flex flex-1 bg-cyan-700 h-[90%] pb-3">
         <Sidebar activeUserId={activeUserId} onUserSelect={handleUserSelect} userLists={userLists} />
         <div className="w-3/4 h-full  flex flex-col">
-          <UserInfo recipident={sellerProfile} />
+          <UserInfo recipident={profileData?.data} />
           <Messages messages={messages} lastMessageRef={lastMessageRef} sender = {UserData?.data} recipident={sellerProfile}  />
           <SendMessage
             message={message}
