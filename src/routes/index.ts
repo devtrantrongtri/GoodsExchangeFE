@@ -1,6 +1,6 @@
 import AdminLayout from "../layouts/AdminLayout";
 import NoLayout from "../layouts/NoLayout";
-import { AdsPage, ChatPage, HomePage, ProfilePage,ProductDetailPage } from "../pages";
+import { AdsPage, ChatPage, HomePage, ProfilePage,ProductDetailPage, PostPage } from "../pages";
 import AdminPage from "../pages/Admin";
 import LoginPage from "../pages/Auth/LoginPage";
 import RegisterPage from "../pages/Auth/RegisterPage";
@@ -46,6 +46,10 @@ const publicRoute : RouteType[] = [
     {
         path: "/product/productDetail/:id",
         component: ProductDetailPage
+    },
+    {
+        path: "/post",
+        component: PostPage
     },
 ]
 

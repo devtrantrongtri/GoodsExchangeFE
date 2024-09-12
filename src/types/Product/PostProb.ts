@@ -95,3 +95,11 @@ export type SellerType = {
   address: string;
   createdAt: [number, number, number, number, number, number]; // Year, Month, Day, Hour, Minute, Second
 };
+
+export interface ProductFormData {
+  category_id: number;
+  title: string;
+  description: string;
+  price: number;
+  status: "AVAILABLE" | "SOLD_OUT" | "UNAVAILABLE" | "BANNED";
+}
