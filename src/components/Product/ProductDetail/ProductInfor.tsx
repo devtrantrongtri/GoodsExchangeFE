@@ -103,7 +103,7 @@ const ProductInfor: React.FC<{ productDetail: ProductType }> = ({ productDetail 
             <h1 className='font-bold text-black'>
               Description :
             </h1>
-            <p className="mt-2 text-gray-600 h-40 overflow-auto">{productDetail.description}</p>
+            <p className="mt-2 text-gray-600 h-40 overflow-auto">{description}</p>
     </div>
 </Badge.Ribbon>
   );

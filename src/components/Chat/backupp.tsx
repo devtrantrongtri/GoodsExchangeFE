@@ -9,107 +9,144 @@ import { Avatar, List, notification, Spin } from 'antd';
 import { useGetMessagesQuery } from '../../services/chat/chat.service';
 import { MessageSendType, MessageType } from '../../types/chat';
 import moment from 'moment'; 
-import { skipToken } from '@reduxjs/toolkit/query';
 const DUMMY_USER_ID = 0;
 
 const Chat = () => {
-
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
   const location = useLocation();
-  const [loadingState, setLoadingState] = useState<boolean>(true);
-  const socket = useSocket();
-
-  const [RecipidentState,SetRecipidentState] = useState<UserProfileType>();
-  const [UserState,SetUserState] = useState<UserProfileType>();
-  const [MessagesCache, SetMessagesCache] = useState<{ [key: number]: MessageType[] }>({}); // obj key : value
-
-  const [userListsState, setUserListsState] = useState<UserProfileType[]>();
-  const { recipient }: { recipient: SellerType | undefined } = location.state || {};
-  const [activeUserId, setActiveUserId] = useState<number|null>(recipient?.userId || null);
-  // Query message for each recipident.
-  const { data: MessagesData, error: messagesError, isLoading: messagesLoading, refetch: refetchMessageList } = useGetMessagesQuery(
-    UserState?.user.userId && RecipidentState?.user.userId ? { sender: UserState.user.userId, recipient: RecipidentState.user.userId } : skipToken // Avoid the query if either is undefined
-  );
-
-// probs
-
-  // const [sellerInfor, setSellerInfor] = useState<SellerType>();
-  // const [sellerProfile, setSellerProfile] = useState<UserProfileType>();
+  const { recipient } = location.state || {};
+  const [sellerInfor, setSellerInfor] = useState<SellerType>();
+  const [sellerProfile, setSellerProfile] = useState<UserProfileType>();
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [sellerCache, setSellerCache] = useState<{ [key: number]: UserProfileType }>({});
   const [message, setMessage] = useState<string>('');
+  const [activeUserId, setActiveUserId] = useState<number>(recipient?.userId || DUMMY_USER_ID);
   const lastMessageRef = useRef<HTMLLIElement>(null);
-  
-  // const { data:UserDataQuery,isError:isErrorQuery} = useGetUserSentQuery();
+  const [userLists, setUserLists] = useState<UserProfileType[]>();
 
-  // const { data: profileData, isError: profileError, isLoading: profileLoading } = useGetSellerProfileQuery(activeUserId, {
-  //   skip: !activeUserId
-  // });
+  const { data: profileData, isError: profileError, isLoading: profileLoading } = useGetSellerProfileQuery(activeUserId, {
+    skip: !activeUserId
+  });
   
-  // const { data: UserData, isError: userError } = useGetProfileQuery();
+  const { data: UserData, isError: userError } = useGetProfileQuery();
+  const socket = useSocket();
   
-  
-console.log(MessagesData);
+  const { data: MessagesData, error: messagesError, isLoading: messagesLoading ,refetch : refetchMessageList} = useGetMessagesQuery(
+    { sender: UserData?.data?.user?.userId ?? 0, recipient: activeUserId ?? 0 },
+    { skip: !UserData?.data?.user?.userId || !activeUserId }
+  );
+const token = localStorage.getItem('token')
+
+  useEffect(() => {
+    console.log("effect 1 ===========================")
+    // Kiểm tra token và điều hướng nếu không có
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+  }, [UserData, navigate]);
+
+  useEffect(() => {
+    console.log("effect 2 ===========================")
+    if (MessagesData) {
+      setMessages(MessagesData);
+    }
+    if(socket && UserData?.data.user.userId){
+
+      socket.subscribe(`/queue/${UserData.data.user.userId}`,(msg) => {
+            console.log("Received private message:", msg);
+            const content : MessageSendType = JSON.parse(msg.body)
+            console.log("content : ",content)
+            const newMessage: MessageType = {
+              messageId: Date.now(),
+              recipient: content.recipient,
+              sender: content.sender ?? 0,
+              content: content.content,
+              messageType: 'text', // Hoặc loại tin nhắn khác nếu cần
+              createAt: new Date().toISOString(), // Thời gian tạo tin nhắn
+            };
+            if(activeUserId === content.recipient){
+              setMessages((pre)=>[...pre,newMessage])
+            }else{
+              console.log("Notifi : you recei a message from ",content.sender )
+              notification.info({
+                message: 'New message',
+                description: 'cos tin nhawns mowis kia =)))',
+                placement: 'top'
+              })
+            }
+        })
+      }
+
+  }, [socket,Messages,activeUserId]);
+
+  useEffect(() => {
+    console.log("effect 3 ===========================")
+
+    if (profileError || messagesError || userError) {
+      setError('Lỗi kết nối. Vui lòng tải lại trang hoặc đăng nhập lại.');
+      notification.error({
+        message: 'Chat Failed',
+        description: 'Có lỗi xảy ra khi tải dữ liệu.',
+        placement: 'top'
+      });
+      setLoading(false);
+    } else {
+      setError('');
+      if (!profileLoading && !messagesLoading) {
+        setLoading(false);
+      }
+    }
+  }, [profileError, messagesError, userError, profileLoading, messagesLoading]);
+
+  const { data } = useGetUserSentQuery();
+
+
+  useEffect(() => {
+    console.log("effect 4 ===========================")
+
+    if (recipient) {
+      console.log('Chatting with recipient:', recipient.name);
+      setSellerInfor(recipient);
+    }
+  }, [recipient,activeUserId]);
 
   const sendMessage = () => {
-    if (socket && UserState && RecipidentState && message.trim()) {
+    if (socket && sellerProfile && message.trim()) {
       console.log("activeUserId : " , activeUserId)
-      const newMessage : MessageSendType = {
-        sender: UserState.user.userId,
-        recipient: RecipidentState.user.userId,
+      const messres : MessageSendType = {
+        sender: UserData?.data?.user?.userId ?? 0,
+        recipient: activeUserId,
         content: message,
         messageType: 'TEXT',
       }
 
-      socket.send(`/app/chatwith/${activeUserId}`, {}, JSON.stringify(newMessage));
+      socket.send(`/app/chatwith/${activeUserId}`, {}, JSON.stringify(messres));
       setMessage('');
-    }else{
-      notification.warning({
-        placement:"topLeft",
-        message : "Error when send message with socket !",
-        description:"Have error while send a message, like the seller infor didnt exits !"
-      })
     }
   };
 
-  
-  // if (loading) {
-    //   return <div className="flex justify-center items-center h-screen"><Spin size="large" /></div>;
-    // }
-    
-    
-    const handleUserSelect = (userId: number) => {
-      setActiveUserId(userId);
-    };
-  // hanle key down and send message
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       if (message.trim()) {
         // Gửi tin nhắn
         sendMessage();
-        if(UserState && RecipidentState){
-
-          // Tạo đối tượng tin nhắn mới
-          const newMessage: MessageType = {
-            messageId: Date.now(), 
-            sender: UserState.user?.userId,
-            recipient: RecipidentState.user.userId,
-            content: message,
-            messageType: 'TEXT', 
-            createAt: new Date().toISOString(),
-          };
-          
-          // Cập nhật danh sách tin nhắn
-          setMessages((prevMessages) => [...prevMessages, newMessage]);
-        }else{
-          notification.warning({
-            placement:"topLeft",
-            message:"Error relative to Keydown",
-            description : "Have error while send a message, like the seller infor didnt exits !"
-
-          })
-        }
+  
+        // Tạo đối tượng tin nhắn mới
+        const newMessage: MessageType = {
+          messageId: Date.now(), 
+          sender: UserData?.data?.user?.userId ?? 0,
+          recipient: activeUserId,
+          content: message,
+          messageType: 'TEXT', 
+          createAt: new Date().toISOString(),
+        };
+  
+        // Cập nhật danh sách tin nhắn
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
   
         // Xóa nội dung tin nhắn sau khi gửi
         setMessage('');
@@ -117,16 +154,66 @@ console.log(MessagesData);
     }
   };
 
+  useEffect(() => {
+    console.log("effect 5 ===========================")
+    if (lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    console.log("effect 6===========================")
+
+    refetchMessageList();
+
+    if (profileData && !sellerCache[activeUserId]) {
+      setSellerProfile(profileData.data);
+      setSellerCache(prev => ({ ...prev, [activeUserId]: profileData.data }));
+    } else if (sellerCache[activeUserId]) {
+      setSellerProfile(sellerCache[activeUserId]);
+    }
+  }, [profileData, activeUserId, sellerCache]);
+
+  useEffect(() => {
+    console.log("effect 7===========================")
+
+    if (data && recipient && profileData) {
+      const isUserInList = data.data.some((user: UserProfileType) => user.user.userId === profileData.data.user.userId);
+      
+      if (!isUserInList && profileData.data.user.userId !== UserData?.data.user.userId) {
+        const newUserList = [...(data.data || []), profileData.data];
+        setUserLists(newUserList);
+      } else {
+        setUserLists(data.data);
+      }
+    }
+
+    
+  }, [data, recipient, profileData, UserData,userLists]);
+
+  // useEffect(() => {
+  //   refetchMessageList();
+
+  // },[activeUserId])
+
+  const handleUserSelect = (userId: number) => {
+    setActiveUserId(userId);
+  };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen"><Spin size="large" /></div>;
+  }
+
   return (
     <div className="h-screen bg-gradient-to-r from-cyan-500  flex flex-col overflow-hidden">
       {/* <div className="h-1/6 "> */}
         <Header />
       {/* </div> */}
       <div className="flex flex-1 bg-cyan-700 h-[90%] pb-3">
-        <Sidebar activeUserId={activeUserId} onUserSelect={handleUserSelect} userLists={userListsState} />
+        <Sidebar activeUserId={activeUserId} onUserSelect={handleUserSelect} userLists={userLists} />
         <div className="w-3/4 h-full  flex flex-col">
-          <UserInfo recipident={RecipidentState} />
-          <Messages messages={activeUserId ? MessagesCache[activeUserId] : []} lastMessageRef={lastMessageRef} sender = {UserState} recipident={RecipidentState}  />
+          <UserInfo recipident={profileData?.data} />
+          <Messages messages={messages} lastMessageRef={lastMessageRef} sender = {UserData?.data} recipident={sellerProfile}  />
           <SendMessage
             message={message}
             setMessage={setMessage}
@@ -139,72 +226,31 @@ console.log(MessagesData);
   );
 };
 
-// const Sidebar = ({ activeUserId, onUserSelect, userListsState }: { activeUserId: number | null, onUserSelect: (userId: number) => void, userListsState: UserProfileType[] | undefined }) => (
-//   <div className="w-1/4 h-full bg-slate-900">
-//     <h1 className="h-[10%] bg-cyan-800 font-bold flex items-center justify-center">
-//       Danh sách User
-//     </h1>
-//     <div className="h-[90%]  overflow-auto">
-//       {userListsState && userLists.map((user) => {
-//         const userId = user.user.userId;
-//         const isActive = activeUserId === userId;
-//         return (
-//           <div
-//             key={userId}
-//             className={`py-2 flex px-4 shadow-sm mb-2 ${isActive ? 'bg-blue-400' : 'bg-white'}`}
-//             onClick={() => onUserSelect(userId)}
-//           >
-//             <Avatar src={user.profileImageUrl || 'https://secure.gravatar.com/avatar/f53779b5676d15e4a7aeeef9c81fa564?s=70&d=wavatar&r=g'} />
-//             <h1>{user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.user.username}</h1>
-//           </div>
-//         );
-//       })}
-//     </div>
-//   </div>
-// );
-
 const Sidebar = ({ activeUserId, onUserSelect, userLists }: { activeUserId: number | null, onUserSelect: (userId: number) => void, userLists: UserProfileType[] | undefined }) => (
   <div className="w-1/4 h-full bg-slate-900">
-    <h1 className="h-[10%] bg-cyan-800 font-bold flex items-center justify-center text-white">
+    <h1 className="h-[10%] bg-cyan-800 font-bold flex items-center justify-center">
       Danh sách User
     </h1>
-    <div className="h-[90%] overflow-auto p-2">
-      {userLists && userLists.length > 0 ? (
-        userLists.map((user) => {
-          const userId = user.user.userId;
-          const isActive = activeUserId === userId;
-          return (
-            <div
-              key={userId}
-              className={`py-2 flex items-center px-4 shadow-sm mb-2 cursor-pointer ${isActive ? 'bg-blue-400' : 'bg-white'} hover:bg-blue-300 transition-colors`}
-              onClick={() => onUserSelect(userId)}
-            >
-              <Avatar
-                className="w-8 h-8 mr-3"
-                src={user.profileImageUrl || 'https://secure.gravatar.com/avatar/f53779b5676d15e4a7aeeef9c81fa564?s=70&d=wavatar&r=g'}
-              />
-              <h1 className="text-black font-medium">{user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.user.username}</h1>
-            </div>
-          );
-        })
-      ) : (
-        <div className="text-white text-center mt-4">
-          Không có người dùng nào.
-        </div>
-      )}
+    <div className="h-[90%]  overflow-auto">
+      {userLists && userLists.map((user) => {
+        const userId = user.user.userId;
+        const isActive = activeUserId === userId;
+        return (
+          <div
+            key={userId}
+            className={`py-2 flex px-4 shadow-sm mb-2 ${isActive ? 'bg-blue-400' : 'bg-white'}`}
+            onClick={() => onUserSelect(userId)}
+          >
+            <Avatar src={user.profileImageUrl || 'https://secure.gravatar.com/avatar/f53779b5676d15e4a7aeeef9c81fa564?s=70&d=wavatar&r=g'} />
+            <h1>{user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.user.username}</h1>
+          </div>
+        );
+      })}
     </div>
   </div>
 );
 
-const UserInfo = ({ recipident }: { recipident: UserProfileType | undefined }) => {
-  if (!recipident) {
-    return (
-      <div className="p-4 bg-gradient-to-r from-cyan-500 shadow-md h-1/6 flex items-center justify-center">
-        <p className="text-xl text-white">Không có thông tin người dùng</p>
-      </div>
-    );
-  }
-  return (
+const UserInfo = ({ recipident }: { recipident: UserProfileType | undefined }) => (
   <div className="p-4 bg-gradient-to-r from-cyan-500 shadow-md h-1/6">
     <h3 className="text-2xl  font-semibold">Thông tin Seller</h3>
     <div className='flex space-x-10 p-3 text-2xl'>
@@ -217,72 +263,10 @@ const UserInfo = ({ recipident }: { recipident: UserProfileType | undefined }) =
       </div>
     </div>
   </div>
-  )
-};
-
-// const Messages = ({ messages, lastMessageRef, sender, recipident }: { messages: MessageType[], lastMessageRef: React.RefObject<HTMLLIElement>, sender: UserProfileType | undefined, recipident: UserProfileType | undefined }) => {
-//   const userId = sender ? sender.user.userId : 0;
-
-//   return (
-//     <ul className="flex-1 overflow-y-auto h-4/6 p-4 space-y-2 ">
-//       {messages.map((msg, index) => {
-//         const isSender = msg.sender === userId;
-
-//         return (
-//           <li
-//             key={index}
-//             className={`flex items-start ${isSender ? 'justify-end' : 'justify-start'} space-x-3`}
-//             ref={index === messages.length - 1 ? lastMessageRef : null}
-//           >
-//             {/* Avatar chỉ hiển thị cho người nhận */}
-//             {!isSender && (
-//               <Avatar
-//                 src={recipident ? recipident.profileImageUrl : `https://www.gravatar.com/avatar/${msg.sender}?d=robohash`} 
-//                 className="w-8 h-8"
-//               />
-//             )}
-//             <div
-//               className={`relative flex-1 max-w-xs p-3 rounded-lg shadow-2xl ${isSender ? 'bg-teal-900 text-white' : 'bg-teal-600 text-white'}`}
-//             >
-//               <div className="text-sm font-semibold mb-1">
-//                 {isSender ? 'You' : `User ${msg.sender}`}
-//               </div>
-//               <div className="text-sm mb-1 break-words">
-//                 {msg.content}
-//               </div>
-//               <div className="absolute bottom-2 right-2 text-xs text-black font-bold">
-//                 {moment(msg.createAt).format('DD MMM YYYY, HH:mm')}
-//               </div>
-//             </div>
-//             {/* Avatar chỉ hiển thị cho người gửi */}
-//             {isSender && (
-//               <Avatar
-//                 src={sender ? sender.profileImageUrl : `https://www.gravatar.com/avatar/${msg.sender}?d=robohash`} 
-//                 className="w-8 h-8"
-//               />
-//             )}
-//           </li>
-//         );
-//       })}
-//     </ul>
-//   );
-// };
+);
 
 const Messages = ({ messages, lastMessageRef, sender, recipident }: { messages: MessageType[], lastMessageRef: React.RefObject<HTMLLIElement>, sender: UserProfileType | undefined, recipident: UserProfileType | undefined }) => {
   const userId = sender ? sender.user.userId : 0;
-
-  // Kiểm tra nếu không có tin nhắn hoặc người dùng
-  if (!messages || !sender || !recipident) {
-    return (
-      <div className="flex-1 flex items-center justify-center h-4/6 p-4">
-        {(!sender || !recipident) ? (
-          <p className="text-gray-500">Không có thông tin người dùng.</p>
-        ) : (
-          <p className="text-gray-500">Chưa có tin nhắn nào.</p>
-        )}
-      </div>
-    );
-  }
 
   return (
     <ul className="flex-1 overflow-y-auto h-4/6 p-4 space-y-2 ">
@@ -355,136 +339,6 @@ const SendMessage = ({
 );
 
 export default Chat;
-
-
-
-
-  // useEffect(() => {
-  //   console.log("effect 1 ===========================")
-  //   // Kiểm tra token và điều hướng nếu không có
-  //   if (!token) {
-  //     navigate('/login');
-  //     return;
-  //   }
-  // }, [UserData, navigate]);
-
-  // useEffect(() => {
-  //   console.log("effect 2 ===========================")
-  //   if (MessagesData) {
-  //     setMessages(MessagesData);
-  //   }
-  //   if(socket && UserData?.data.user.userId){
-
-  //     socket.subscribe(`/queue/${UserData.data.user.userId}`,(msg) => {
-  //           console.log("Received private message:", msg);
-  //           const content : MessageSendType = JSON.parse(msg.body)
-  //           console.log("content : ",content)
-  //           const newMessage: MessageType = {
-  //             messageId: Date.now(),
-  //             recipient: content.recipient,
-  //             sender: content.sender ?? 0,
-  //             content: content.content,
-  //             messageType: 'text', // Hoặc loại tin nhắn khác nếu cần
-  //             createAt: new Date().toISOString(), // Thời gian tạo tin nhắn
-  //           };
-  //           if(activeUserId === content.recipient){
-  //             setMessages((pre)=>[...pre,newMessage])
-  //           }else{
-  //             console.log("Notifi : you recei a message from ",content.sender )
-  //             notification.info({
-  //               message: 'New message',
-  //               description: 'cos tin nhawns mowis kia =)))',
-  //               placement: 'top'
-  //             })
-  //           }
-  //       })
-  //     }
-
-  // }, [socket,Messages,activeUserId]);
-
-  // useEffect(() => {
-  //   console.log("effect 3 ===========================")
-
-  //   if (profileError || messagesError || userError) {
-  //     // setError('Lỗi kết nối. Vui lòng tải lại trang hoặc đăng nhập lại.');
-  //     notification.error({
-  //       message: 'Chat Failed',
-  //       description: 'Có lỗi xảy ra khi tải dữ liệu.',
-  //       placement: 'top'
-  //     });
-  //     setLoading(false);
-  //   } else {
-  //     // setError('');
-  //     if (!profileLoading && !messagesLoading) {
-  //       setLoading(false);
-  //     }
-  //   }
-  // }, [profileError, messagesError, userError, profileLoading, messagesLoading]);
-
-
-
-  // useEffect(() => {
-  //   console.log("effect 4 ===========================")
-
-  //   if (recipient) {
-  //     console.log('Chatting with recipient:', recipient.name);
-  //     setSellerInfor(recipient);
-  //   }
-  // }, [recipient,activeUserId]);
-
-
-
-
-  // check lastest message.
-  // useEffect(() => {
-  //   console.log("effect 5 ===========check lastest message================")
-  //   if (lastMessageRef.current) {
-  //     lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
-  //   }
-  // }, [messages]);
-
-  // useEffect(() => {
-  //   console.log("effect 6===========================")
-
-  //   refetchMessageList();
-
-  //   if (profileData && !sellerCache[activeUserId]) {
-  //     setSellerProfile(profileData.data);
-  //     setSellerCache(prev => ({ ...prev, [activeUserId]: profileData.data }));
-  //   } else if (sellerCache[activeUserId]) {
-  //     setSellerProfile(sellerCache[activeUserId]);
-  //   }
-  // }, [profileData, activeUserId, sellerCache]);
-
-  // useEffect(() => {
-  //   console.log("effect 7===========================")
-
-  //   if (data?.data && recipient && profileData) {
-  //     const isUserInList = data.data.some((user: UserProfileType) => user.user.userId === profileData.data.user.userId);
-      
-  //     if (!isUserInList && profileData.data.user.userId !== UserData?.data.user.userId) {
-  //       const newUserList = [...(data.data || []), profileData.data];
-  //       setUserLists(newUserList);
-  //     } else {
-  //       setUserLists(data.data);
-  //     }
-  //   }else{
-  //     setUserLists([]);
-  //   }
-
-    
-  // }, [data, recipient, profileData, UserData,userLists]);
-
-  // useEffect(() => {
-  //   refetchMessageList();
-
-  // },[activeUserId])
-
-
-
-
-
-
 
 
 // import React, { useState, useEffect, useRef } from 'react';
