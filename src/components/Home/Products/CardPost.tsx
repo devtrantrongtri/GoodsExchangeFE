@@ -21,6 +21,7 @@ function CardPost({ product }: { product: ProductType }) {
       prevIndex < product.imageUrls.length - 1 ? prevIndex + 1 : 0
     );
   };
+  const showNavigationButtons = product.imageUrls.length > 1;
 
   return (
     <div>
@@ -28,7 +29,7 @@ function CardPost({ product }: { product: ProductType }) {
       
         <Card
           hoverable
-          style={{ width: 340, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}
+          style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}
           cover={
             <div className="relative flex items-center justify-center overflow-hidden" style={{ height: 260 }}>
               <img
@@ -36,22 +37,24 @@ function CardPost({ product }: { product: ProductType }) {
                 src={product.imageUrls[currentImageIndex]}
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
-              <div className="absolute inset-0 flex justify-between items-center p-2 opacity-0 hover:opacity-100">
-                <Button
-                  type="default"
-                  onClick={handlePrevious}
-                  style={{ backgroundColor: 'rgba(0,0,0,0.5)', color: 'white', zIndex: 10 }}
-                >
-                  Previous
-                </Button>
-                <Button
-                  type="default"
-                  onClick={handleNext}
-                  style={{ backgroundColor: 'rgba(0,0,0,0.5)', color: 'white', zIndex: 10 }}
-                >
-                  Next
-                </Button>
-              </div>
+              {showNavigationButtons && (
+                <div className="absolute inset-0 flex justify-between items-center p-2 opacity-0 hover:opacity-100">
+                  <Button
+                    type="default"
+                    onClick={handlePrevious}
+                    style={{ backgroundColor: 'rgba(0,0,0,0.5)', color: 'white', zIndex: 10 }}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    type="default"
+                    onClick={handleNext}
+                    style={{ backgroundColor: 'rgba(0,0,0,0.5)', color: 'white', zIndex: 10 }}
+                  >
+                    Next
+                  </Button>
+                </div>
+              )}
             </div>
           }
         >

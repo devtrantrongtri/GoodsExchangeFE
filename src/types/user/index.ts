@@ -2,11 +2,11 @@
 export interface UserProfileResponse {
     code: number;
     msg: string;
-    data: UserProfile;
+    data: UserProfileType;
   }
   
   // Định nghĩa kiểu cho UserProfile
-  export interface UserProfile {
+  export interface UserProfileType {
     profileId: number;
     user: User;
     bio: string | null;
@@ -46,5 +46,5 @@ export interface UpdateProfileRequest {
 export interface UserSentListResponseType {
   code: number;
   msg: string;
-  data: UserProfile[];
+  data: UserProfileType[];
 }
