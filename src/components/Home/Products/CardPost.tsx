@@ -24,61 +24,64 @@ function CardPost({ product }: { product: ProductType }) {
   const showNavigationButtons = product.imageUrls.length > 1;
 
   return (
-    <div>
+    <div className='my-3'>
         
       
         <Card
           hoverable
-          style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}
+          className="h-full flex flex-col"
           cover={
-            <div className="relative flex items-center justify-center overflow-hidden" style={{ height: 260 }}>
-              <img
-                alt={product.title}
-                src={product.imageUrls[currentImageIndex]}
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-              />
-              {showNavigationButtons && (
-                <div className="absolute inset-0 flex justify-between items-center p-2 opacity-0 hover:opacity-100">
-                  <Button
-                    type="default"
-                    onClick={handlePrevious}
-                    style={{ backgroundColor: 'rgba(0,0,0,0.5)', color: 'white', zIndex: 10 }}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    type="default"
-                    onClick={handleNext}
-                    style={{ backgroundColor: 'rgba(0,0,0,0.5)', color: 'white', zIndex: 10 }}
-                  >
-                    Next
-                  </Button>
-                </div>
-              )}
-            </div>
+            <div className="relative group">
+          <img
+              alt={product.title}
+              src={product.imageUrls[currentImageIndex]}
+              className="w-full h-40 sm:h-48 md:h-56 lg:h-64 xl:h-72 object-contain"
+            />
+            {showNavigationButtons && (
+              <div className="absolute  inset-0 flex justify-between items-center p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  type="default"
+                  onClick={handlePrevious}
+                  className="bg-black bg-opacity-50 text-white"
+                >
+                  Previous
+                </Button>
+                <Button
+                  type="default"
+                  onClick={handleNext}
+                  className="bg-black bg-opacity-50 text-white"
+                >
+                  Next
+                </Button>
+              </div>
+            )}
+          </div>
+
           }
         >
-          <Link to={'/product/productDetail/' + product.productId}>
-          <Meta
-          data-tooltip-id="my-tooltip"
-            data-tooltip-content="click to see more"
-            className="font-semibold text-lg hover:shadow-md rounded-3xl p-2"
-            title={<div className="text-center">{product.title}</div>}
-            description={
-              <div className="flex justify-between items-center">
-                <span className="text-red-500 font-bold">
-                  {product.price} VND
-                </span>
-                <span className="text-gray-500 text-sm">
-                  Date: {getRelativeTime(product.create_at)}
-                </span>
-              </div>
-            }
-            />
-            </Link>
-        </Card>
-        <Tooltip id="my-tooltip" place="bottom" /> 
-    </div>
+      <Link to={`/product/productDetail/${product.productId}`}>
+      <Meta
+        data-tooltip-id="my-tooltip"
+        data-tooltip-content="Click to see more"
+        className="font-semibold text-lg hover:shadow-md rounded-3xl p-2"
+        title={<div className="text-center text-base sm:text-lg md:text-xl lg:text-2xl">
+          {product.title}
+        </div>}
+        description={
+          <div className="flex justify-between items-center">
+            <span className="text-red-500 font-bold">
+              {product.price} VND
+            </span>
+            <span className="text-gray-500 text-sm">
+              Date: {getRelativeTime(product.create_at)}
+            </span>
+          </div>
+        }
+      />
+    </Link>
+    <Tooltip id="my-tooltip" place="bottom" />
+  </Card>
+</div>
   );
 }
 

@@ -57,7 +57,7 @@ function SellerInfor({ seller }: { seller: SellerType }) {
         <h2 className="text-lg font-bold mb-4">Posted Products of {fullname}</h2>
         <div className="flex overflow-x-auto space-x-4">
           {postOfUser?.map((product) => (
-            <div className="min-w-[350px] h-96" key={product.productId}>
+            <div className="min-w-[350px]" key={product.productId}>
               <CardPost product={product} />
             </div>
           ))}

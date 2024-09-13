@@ -1,25 +1,25 @@
-import  { ReactNode } from 'react'
-import Header from '../components/Header/Header'
-import Footer from '../components/Footer/Footer'
+import { ReactNode } from "react";
+import Header from "../components/Header/Header";
+import Footer from "../components/Footer/Footer";
 
-function DefaultLayout({children} : {children: ReactNode} ) {
+function DefaultLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
-      <div>
+      {/* <div> */}
       <Header />
 
-      </div>
+      {/* </div> */}
 
       {/* Main content */}
-      <main className="flex-grow pt-32 bg-cyan-50">
-        {children}
+      <main className="flex-grow pt-2 md:pt-8 lg:pt-16 bg-cyan-50">
+        <div className="container mx-auto px-4">{children}</div>
       </main>
 
       {/* Footer */}
       <Footer />
     </div>
-  )
+  );
 }
 
-export default DefaultLayout
+export default DefaultLayout;
