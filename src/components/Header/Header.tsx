@@ -6,138 +6,111 @@ import Notification from "./Notification";
 import HProfile from "./HProfile";
 import HWishList from "./HWishList";
 import { Tooltip } from "react-tooltip";
-// import { tippy } from "@tippyjs/react";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
-import {  Alert, Button, Dropdown, Menu, MenuProps, Spin } from "antd";
-// import {  MoreOutlined,  } from "@ant-design/icons";
-import { Link, useNavigate } from "react-router-dom";
+import { Button, Spin } from "antd";
+import { Link } from "react-router-dom";
 import { useGetProfileQuery } from "../../services/user/user.service";
+import { MenuOutlined } from "@ant-design/icons";
 
 function Header() {
   const scrollPosition = useScrollPosition();
   const [isAuthen, setIsAuthen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isScrolled = scrollPosition > 50;
-  const token = localStorage.getItem('token')
-  const { data: profileData, isLoading, isError,refetch } = useGetProfileQuery(undefined,{skip: !token, });
-  // const { isError, isFetching, data,refetch } = useGetProfileQuery(undefined, {
-  //    // Skip query if no token
-  // });
+  const token = localStorage.getItem('token');
+  const { data: profileData, isLoading, isError } = useGetProfileQuery(undefined, { skip: !token });
 
-  
   useEffect(() => {
-    if ( token) {
+    if (token) {
       setIsAuthen(true);
-    }else{
-      setIsAuthen(false)
+    } else {
+      setIsAuthen(false);
     }
   }, [token]);
 
-
   if (isLoading) return <Spin tip="Loading..." className="flex justify-center items-center h-screen" />;
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   const getLinkClass = (path: string) => {
     return location.pathname === path
       ? 'text-[#0ea5e9] text-lg font-bold'
       : 'text-black hover:text-[#0ea5e9]';
   };
+
   return (
-    <div className="">
+    <div className="relative">
       <header
-        className={`flex flex-row px-12 bg-cyan-50  transition-all duration-100 ${
-          isScrolled
-            ? " py-5 bg-cyan-100 shadow-2xl rounded-3xl fixed top-0 left-0 right-0"
-            : "py-3 bg-opacity-100"
-        } z-50 `}
+        className={`flex items-center justify-between px-4 md:px-12 bg-cyan-50 transition-all duration-100 ${
+          isScrolled ? "py-5 bg-cyan-100 shadow-2xl rounded-3xl fixed top-0 left-0 right-0 z-50" : "py-3 bg-opacity-100"
+        }`}
       >
-        <div
-          className="basis-1/6 my-auto mx-1"
-          data-tooltip-id="my-tooltip"
-          data-tooltip-content="UTH pro"
-        >
+        {/* Logo */}
+        <div className="flex items-center basis-1/6">
           <Logo />
         </div>
-        <div className="basis-1/6 flex items-center justify-center font-semibold space-x-5">
-          <Link to="/" className={getLinkClass('/')}>
-            Home
-          </Link>
-          <Link to="/product/" className={getLinkClass('/product/')}>
-            Explore
-          </Link>
-          <Link to="/contact/" className={getLinkClass('/contact/')}>
-            Contact
-          </Link>
-          {/* <a
-            href="https://github.com/devtrantrongtri"
-            className={location.pathname === 'https://github.com/devtrantrongtri' ? 'text-[#1e6668] font-semibold' : 'text-gray-600 hover:text-[#1e6668]'}
-          >
-            Contact
-          </a> */}
+
+        {/* Desktop Navigation Links */}
+        <div className="hidden md:flex basis-1/6 items-center justify-center font-semibold space-x-5">
+          <Link to="/" className={getLinkClass('/')}>Home</Link>
+          <Link to="/product/" className={getLinkClass('/product/')}>Explore</Link>
+          <Link to="/contact/" className={getLinkClass('/contact/')}>Contact</Link>
         </div>
-        <div
-          className="basis-2/6  w-full my-auto"
-          data-tooltip-content="Nhap tu khoa de tim kiem"
-        >
-          
+
+        {/* Search Bar */}
+        <div className="hidden md:block basis-2/6">
           <SeachBar />
         </div>
 
-        <div className="flex justify-end items-center space-x-4 basis-2/6 my-auto">
-
-          { isAuthen &&  !isError ? (<>
-            <div
-            className=""
-            data-tooltip-id="my-tooltip"
-            data-tooltip-content="you want to chat ?"
-          >
-            <HChat />
-          </div>
-          <div
-            className=""
-            data-tooltip-id="my-tooltip"
-            data-tooltip-content="Wish List "
-          >
-            <HWishList />
-          </div>
-          <div
-            className=""
-            data-tooltip-id="my-tooltip"
-            data-tooltip-content="Notification ! "
-          >
-            <Notification />
-          </div>
-          <div
-            className=""
-            // data-tooltip-id="my-tooltip"
-            // data-tooltip-content="Your profile "
-          >
-         <HProfile
-            avatar={
-              profileData
-                ? { 
-                    avartar: profileData.data.profileImageUrl || 'https://secure.gravatar.com/avatar/f53779b5676d15e4a7aeeef9c81fa564?s=70&d=wavatar&r=g', // Provide default image URL
-                    name: profileData.data.firstName || profileData.data.user.username // Provide default name
-                  }
-                : null
-            }
-      />
-          
-
-          </div>
-          </>) : (<>
-              <Link to='/auth/login'>
-                <Button className=" overflow-hidden px-10 py-5 font-bold" type="primary" danger>
-                {/* <span><Avatar className="" shape="square" size={64} icon={<UserOutlined />} /></span> */}
-                  Login
-                </Button>
-              </Link>
-          </>)}
+        {/* Authentication Buttons and Menu */}
+        <div className="flex items-center justify-end space-x-4 md:basis-2/6">
+          {isAuthen && !isError ? (
+            <>
+              <HChat />
+              <HWishList />
+              <Notification />
+              <HProfile
+                avatar={
+                  profileData
+                    ? { 
+                        avartar: profileData.data.profileImageUrl || 'https://secure.gravatar.com/avatar/f53779b5676d15e4a7aeeef9c81fa564?s=70&d=wavatar&r=g',
+                        name: profileData.data.firstName || profileData.data.user.username
+                      }
+                    : null
+                }
+              />
+            </>
+          ) : (
+            <Link to="/auth/login">
+              <Button className="px-6 py-3 font-bold" type="primary" danger>Login</Button>
+            </Link>
+          )}
         </div>
-        {/* xuw lys tool tip cho elements */}
-        <Tooltip id="my-tooltip" place="bottom" />
+
+        {/* Mobile Hamburger Menu */}
+        <div className="flex md:hidden items-center justify-end">
+          <button onClick={toggleMenu}>
+            <MenuOutlined className="text-2xl" />
+          </button>
+        </div>
       </header>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="absolute top-16 left-0 right-0 bg-white shadow-lg p-4 z-50 md:hidden">
+          <Link to="/" className={getLinkClass('/')} onClick={toggleMenu}>Home</Link>
+          <Link to="/product/" className={getLinkClass('/product/')} onClick={toggleMenu}>Explore</Link>
+          <Link to="/contact/" className={getLinkClass('/contact/')} onClick={toggleMenu}>Contact</Link>
+          <SeachBar />
+        </div>
+      )}
+
+      {/* Tooltip */}
+      <Tooltip id="my-tooltip" place="bottom" />
     </div>
   );
 }
 
 export default Header;
-
-
