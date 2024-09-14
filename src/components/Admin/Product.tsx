@@ -104,14 +104,14 @@ const Product: React.FC = () => {
         <form className="max-w-md mx-auto w-full">
           <label
             htmlFor="default-search"
-            className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+            className="mb-2 text-sm font-medium text-gray-900 sr-only light:text-white"
           >
             Search
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
               <svg
-                className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                className="w-4 h-4 text-gray-500 light:text-gray-400"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -131,7 +131,7 @@ const Product: React.FC = () => {
               value={searchQuery}
               onChange={handleSearchChange}
               id="default-search"
-              className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white light:focus:ring-blue-500 light:focus:border-blue-500"
               placeholder="Search product..."
               required
             />
@@ -141,15 +141,15 @@ const Product: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2 h-auto text-center me-2 mb-2"
+          className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 light:focus:ring-blue-800 shadow-lg shadow-blue-500/50 light:shadow-lg light:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2 h-auto text-center me-2 mb-2"
         >
           Add product
         </button>
       </div>
 
       <div className="relative overflow-x-auto">
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 light:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 light:bg-gray-700 light:text-gray-400">
             <tr>
               <th scope="col" className="p-4">
                 <div className="flex items-center">
@@ -158,7 +158,7 @@ const Product: React.FC = () => {
                     type="checkbox"
                     checked={selectAll}
                     onChange={toggleSelectAll}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 light:focus:ring-blue-600 light:ring-offset-gray-800 light:focus:ring-offset-gray-800 focus:ring-2 light:bg-gray-700 light:border-gray-600"
                   />
                   <label htmlFor="checkbox-all-search" className="sr-only">
                     checkbox
@@ -193,7 +193,7 @@ const Product: React.FC = () => {
               currentProducts.map((product) => (
                 <tr
                   key={product.productId}
-                  className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
+                  className="odd:bg-white odd:light:bg-gray-900 even:bg-gray-50 even:light:bg-gray-800 border-b light:border-gray-700"
                 >
                   <td className="w-4 p-4">
                     <div className="flex items-center">
@@ -202,7 +202,7 @@ const Product: React.FC = () => {
                         type="checkbox"
                         checked={selectedProducts.includes(product.productId)}
                         onChange={() => toggleSelectProduct(product.productId)}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 light:focus:ring-blue-600 light:ring-offset-gray-800 light:focus:ring-offset-gray-800 focus:ring-2 light:bg-gray-700 light:border-gray-600"
                       />
                       <label
                         htmlFor={`checkbox-product-${product.productId}`}
@@ -219,7 +219,7 @@ const Product: React.FC = () => {
                       className="w-16 h-16"
                     />
                   </td>
-                  <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap light:text-white">
                     {product.title}
                   </td>
                   <td className="px-6 py-4">{product.description}</td>
@@ -241,13 +241,13 @@ const Product: React.FC = () => {
                   <td className="px-6 py-4">
                     <a
                       href="#"
-                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                      className="font-medium text-blue-600 light:text-blue-500 hover:underline"
                     >
                       Edit
                     </a>
                     <a
                       href="#"
-                      className="font-medium text-red-600 dark:text-red-500 hover:underline ms-3"
+                      className="font-medium text-red-600 light:text-red-500 hover:underline ms-3"
                     >
                       Remove
                     </a>
@@ -278,7 +278,7 @@ const Product: React.FC = () => {
                 currentPage === 0
                   ? "cursor-not-allowed bg-gray-200 text-gray-400"
                   : "hover:bg-gray-100 hover:text-gray-700"
-              } dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white`}
+              } light:bg-gray-800 light:border-gray-700 light:text-gray-400 light:hover:bg-gray-700 light:hover:text-white`}
             >
               Previous
             </button>
@@ -292,7 +292,7 @@ const Product: React.FC = () => {
                   currentPage === index
                     ? "text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700"
                     : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
-                } dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white`}
+                } light:border-gray-700 light:text-gray-400 light:bg-gray-800 light:hover:bg-gray-700 light:hover:text-white`}
               >
                 {index + 1}
               </button>
@@ -306,7 +306,7 @@ const Product: React.FC = () => {
                 currentPage === totalPages - 1
                   ? "cursor-not-allowed bg-gray-200 text-gray-400"
                   : "hover:bg-gray-100 hover:text-gray-700"
-              } dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white`}
+              } light:bg-gray-800 light:border-gray-700 light:text-gray-400 light:hover:bg-gray-700 light:hover:text-white`}
             >
               Next
             </button>

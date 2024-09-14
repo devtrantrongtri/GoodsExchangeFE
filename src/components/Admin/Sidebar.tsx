@@ -14,9 +14,11 @@ import {
   UserOutlined,
   DownOutlined,
 } from "@ant-design/icons";
-import Dashboard from "./Dashboard.tsx";
-import User from "./User.tsx";
-import Product from "./Product.tsx";
+import Dashboard from "./Dashboard";
+import User from "./User";
+import Product from "./Product";
+import Report from "./Report";
+import { useGetProfileQuery } from "../../services/user/user.service";
 
 interface MenuItem {
   key: string;
@@ -24,7 +26,13 @@ interface MenuItem {
   label: string;
 }
 
-const SideBar: React.FC = () => {
+interface SideBarProps {
+  role: string;
+}
+
+const SideBar: React.FC<SideBarProps> = ({ role }) => {
+  const token = localStorage.getItem("token");
+  const { data: profileData } = useGetProfileQuery(undefined, { skip: !token });
   const { Header, Sider, Content } = Layout;
   const { Title } = Typography;
 
@@ -32,37 +40,23 @@ const SideBar: React.FC = () => {
   const [currentComponent, setCurrentComponent] = useState<string>("dashboard");
 
   const components: { [key: string]: JSX.Element } = {
-    dashboard: <Dashboard />,
-    user: <User />,
-    product: <Product />,
+    dashboard: role === "admin" ? <Dashboard /> : <></>,
+    user: role === "admin" ? <User /> : <></>,
+    product: role === "admin" ? <Product /> : <></>,
+    report: role === "admin" || role === "moderator" ? <Report /> : <></>,
   };
 
   const items: MenuItem[] = [
-    {
-      key: "dashboard",
-      icon: <FaTachometerAlt />,
-      label: "Dashboard",
-    },
-    {
-      key: "user",
-      icon: <FaUsers />,
-      label: "User",
-    },
-    {
-      key: "product",
-      icon: <FaProductHunt />,
-      label: "Product",
-    },
-    {
-      key: "report",
-      icon: <FaBan />,
-      label: "Report",
-    },
-    {
-      key: "adminstrator",
-      icon: <FaCogs />,
-      label: "Adminstator",
-    },
+    ...(role === "admin"
+      ? [
+          { key: "dashboard", icon: <FaTachometerAlt />, label: "Dashboard" },
+          { key: "user", icon: <FaUsers />, label: "User" },
+          { key: "product", icon: <FaProductHunt />, label: "Product" },
+        ]
+      : [{ key: "report", icon: <FaBan />, label: "Report" }]),
+    ...(role === "admin"
+      ? [{ key: "admin", icon: <FaCogs />, label: "Admin" }]
+      : []),
   ];
 
   const toggleOpen = () => {
@@ -118,7 +112,9 @@ const SideBar: React.FC = () => {
 
           <Space className="flex justify-between w-full pr-5">
             <Title className="my-5">
-              <b className="text-lg">Hello, --username--</b>
+              <b className="text-lg">
+                Hello, {profileData ? profileData.data.user.username : ""}
+              </b>
               <Title className="text-gray-500">
                 <p className="text-sm">Have a good day</p>
               </Title>
@@ -127,9 +123,13 @@ const SideBar: React.FC = () => {
               <Avatar icon={<UserOutlined />} />
               <Space size="large">
                 <Title>
-                  <b className="text-base">--username--</b>
+                  <b className="text-base">
+                    {profileData ? profileData.data.user.username : ""}
+                  </b>
                   <Title className="text-gray-500">
-                    <p className="text-xs">Admin</p>
+                    <p className="text-xs">
+                      {profileData ? profileData.data.user.roles : ""}
+                    </p>
                   </Title>
                 </Title>
                 <DownOutlined />
