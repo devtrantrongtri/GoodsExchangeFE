@@ -89,7 +89,7 @@ function SearchBar() {
     setIsOpen(false);
   };
   return (
-    <div className="relative w-[48rem] ">
+    <div className="relative w-80 md:w-[48rem] ">
       <form action="" className="flex flex-row">
         <Tippy
           visible={!loading && isOpen}

@@ -36,8 +36,8 @@ function Header() {
 
   const getLinkClass = (path: string) => {
     return location.pathname === path
-      ? 'text-[#0ea5e9] text-lg font-bold'
-      : 'text-black hover:text-[#0ea5e9]';
+      ? 'text-[#0ea5e9] text-lg font-bold m-4'
+      : 'text-black hover:text-[#0ea5e9] m-4';
   };
 
   return (
@@ -99,11 +99,13 @@ function Header() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="absolute top-16 left-0 right-0 bg-white shadow-lg p-4 z-50 md:hidden">
+        <div className="fixed top-24 left-0 right-0 bg-white shadow-lg p-4 z-50 md:hidden">
           <Link to="/" className={getLinkClass('/')} onClick={toggleMenu}>Home</Link>
           <Link to="/product/" className={getLinkClass('/product/')} onClick={toggleMenu}>Explore</Link>
           <Link to="/contact/" className={getLinkClass('/contact/')} onClick={toggleMenu}>Contact</Link>
+          <div className="sticky">
           <SeachBar />
+          </div>
         </div>
       )}
 
