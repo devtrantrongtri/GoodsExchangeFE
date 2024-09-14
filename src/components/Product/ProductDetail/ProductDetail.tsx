@@ -8,6 +8,7 @@ import ProductDeletedOrHiddenPage from '../../Util/ProductDeletedOrHiddenPage';
 import { Breadcrumb } from 'antd';
 import { Link } from 'react-router-dom';
 import { HomeOutlined } from '@ant-design/icons';
+import Comment from './Comment';
 
 function ProductDetail() {
     const { id } = useParams<{ id: string }>();
@@ -52,6 +53,8 @@ function ProductDetail() {
       <div className='col-span-2'>
       <SellerInfor seller = {productDetail.seller}/>
       </div>
+
+      <Comment postId={productDetail.productId}/>
 
     </div>
   )

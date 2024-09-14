@@ -1,3 +1,5 @@
+import { User } from "../user";
+
 export type CardPostProps = {
   name: string,
   img: string,
@@ -102,4 +104,24 @@ export interface ProductFormData {
   description: string;
   price: number;
   status: "AVAILABLE" | "SOLD_OUT" | "UNAVAILABLE" | "BANNED";
+}
+
+export interface Comment {
+  comment_id: number;
+  product: ProductType;
+  user: User;
+  text: string;
+  createAt: [number, number, number, number, number, number];
+}
+
+export interface CommentResponse {
+  code: number;
+  msg: string;
+  data: Comment[];
+}
+
+export interface CommentRequest {
+  productId: string;
+  userId: string;
+  message: string;
 }

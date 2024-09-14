@@ -25,7 +25,6 @@ const Filter: React.FC<FilterProps> = ({
   setMaxPrice,
   setCategory,
   setProductName,
-  onApplyFilters,
 }) => {
   const { response, error, loading, fetchData } = useAxios<CategoryType[]>();
   const [categories, setCategories] = useState<CategoryType[]>([]);
@@ -72,47 +71,40 @@ const Filter: React.FC<FilterProps> = ({
 
         <div className="mb-4">
           <div className="flex justify-between mt-2">
-            <span>{minPrice}</span>
-            <span>{maxPrice}</span>
+            <span>{minPrice} VND</span>
+            <span>{maxPrice} VND</span>
           </div>
         </div>
       </div>
 
-      <div className="border-t border-gray-200 mb-4">
-        <label className="block text-sm font-medium text-gray-700">
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Category
         </label>
-
-        <div className="pt-6">
-          <div className="space-y-6">
-            {loading ? (
-              <p>Loading categories...</p>
-            ) : error ? (
-              <p>Error fetching categories</p>
-            ) : (
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full p-2 border rounded"
-              >
-                <option value="">All Categories</option>
-                {categories.map((cat) => (
-                  <option
-                    key={cat.categoryId}
-                    value={cat.name}
-                    selected={cat.name === category}
-                  >
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div>
+        <div className="relative">
+          {loading ? (
+            <p className="text-gray-500">Loading categories...</p>
+          ) : error ? (
+            <p className="text-red-500">Error fetching categories</p>
+          ) : (
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+            >
+              <option value="">All Categories</option>
+              {categories.map((cat) => (
+                <option key={cat.categoryId} value={cat.name}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Product Name
         </label>
         <input
@@ -120,16 +112,9 @@ const Filter: React.FC<FilterProps> = ({
           placeholder="Product name"
           value={productName}
           onChange={(e) => setProductName(e.target.value)}
-          className="w-full p-2 border rounded"
+          className="block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
         />
       </div>
-
-      <button
-        onClick={onApplyFilters}
-        className="w-full bg-blue-500 text-white p-2 rounded"
-      >
-        Apply Filters
-      </button>
     </div>
   );
 };
