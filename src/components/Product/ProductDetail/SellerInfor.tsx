@@ -27,7 +27,7 @@ function SellerInfor({ seller }: { seller: SellerType }) {
   const profileImageUrl = profile?.profileImageUrl || 'https://via.placeholder.com/150';
 
   return (
-    <div className='flex flex-row py-10'>
+    <div className='col-span-1 md:flex md:flex-row py-10'>
       {/* Thông tin người dùng */}
       
       <Card

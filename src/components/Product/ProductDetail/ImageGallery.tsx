@@ -23,7 +23,7 @@ const ImageGallery = ({ imgs }: { imgs: string[] }) => {
         </button>
 
         {/* Carousel hiển thị ảnh */}
-        <div className="w-96 h-96">
+        <div className="w-60 h-60  md:w-96 md:h-96">
           <Carousel
             ref={carouselRef}
             beforeChange={(from, to) => setCurrentIndex(to)}
@@ -34,9 +34,9 @@ const ImageGallery = ({ imgs }: { imgs: string[] }) => {
             {imgs.map((img, index) => (
               <div
                 key={index}
-                className="flex justify-center items-center h-96 w-96 bg-white"
+                className="flex justify-center items-center w-60 h-60  md:w-96 md:h-96 bg-white"
               >
-                <img className="h-80 w-80 mx-auto" src={img} alt={`Image ${index + 1}`} />
+                <img className="w-50 h-50 md:h-80 md:w-80 mx-auto" src={img} alt={`Image ${index + 1}`} />
               </div>
             ))}
           </Carousel>

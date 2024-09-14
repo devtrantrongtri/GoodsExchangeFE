@@ -42,7 +42,7 @@ const ProductInfor: React.FC<{ productDetail: ProductType }> = ({ productDetail 
 
   return (
       <Badge.Ribbon text={status} color="green">
-    <div className="p-10 w-[460px] mx-auto bg-white shadow-lg rounded-lg">
+    <div className="p-10 w-96 md:w-[460px] mx-auto bg-white shadow-lg rounded-lg">
       {/* Product Name */}
       
       <h1 className="text-xl font-bold text-gray-800">{title}</h1>
