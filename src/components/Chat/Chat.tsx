@@ -21,7 +21,7 @@ const Chat = () => {
   const lastMessageRef = useRef<HTMLLIElement>(null);
 
   // Objects State
-  const [RecipidentState,SetRecipidentState] = useState<{[key:number]:UserProfileType}>({});
+  const [RecipientState,SetRecipientState] = useState<{[key:number]:UserProfileType}>({});
   const [UserState,SetUserState] = useState<UserProfileType>();
   const [MessagesCache, SetMessagesCache] = useState<{ [key: number]: MessageType[] }>({}); // obj key : array
   const [message, setMessage] = useState<string>('');
@@ -32,7 +32,7 @@ const Chat = () => {
   // NOTE : QUERY
   // Query message for each recipident.
   const { data: MessagesData, error: messagesError, isLoading: messagesLoading, refetch: refetchMessageList } = useGetMessagesQuery(
-    activeUserId && UserState?.user.userId && RecipidentState[activeUserId]?.user.userId ? { sender: UserState.user.userId, recipient: RecipidentState[activeUserId].user.userId } : skipToken // Avoid the query if either is undefined
+    activeUserId && UserState?.user.userId && RecipientState[activeUserId]?.user.userId ? { sender: UserState.user.userId, recipient: RecipientState[activeUserId].user.userId } : skipToken // Avoid the query if either is undefined
   );
   // Query for User data
   const { data: UserData, isError: userError } = useGetProfileQuery();
@@ -42,52 +42,6 @@ const Chat = () => {
   const { data:UserSentData,isError:UserSentError} = useGetUserSentQuery();
   
 // init data for User,Particular Recipident, Messages if true.
-  // useEffect(()=> {
-  //   // intit UserState
-  //   if(UserData && !userError){
-  //     SetUserState(UserData.data);
-  //   }else{
-  //     notification.warning({
-  //       message:"User data wasnt imported yet!",
-  //       pauseOnHover:true,
-  //       placement:"topLeft"
-  //     })
-  //   }
-  //   console.log("User sent list  1 :",UserSentData)
-
-  //   // init list user sent 
-  //   if(UserSentData && UserSentData.data && !UserSentError){
-  //     // setUserListsState(UserData?.data)
-  //     console.log("User sent list  :",UserSentData)
-  //     console.log("User sent list  :",UserSentData)
- 
-  //   }else{
-  //     console.log(UserSentError)
-  //   }
-    
-  //   // intit current Recipident 
-  //   if(RecipientData && !RecipidentError && activeUserId){
-  //     SetRecipidentState({[activeUserId]:RecipientData.data})
-  //   }else{
-  //     notification.info({
-  //       message:"Check a seller for chat !",
-  //       pauseOnHover:true,
-  //       placement:"topLeft"
-  //     })
-  //   }
-
-
-  //   // init messages for 2 users
-  //   if(!messagesError && MessagesData && activeUserId){
-  //     SetMessagesCache({[activeUserId]:MessagesData})
-  //   }else{
-  //     notification.warning({
-  //       message:"Messages wasnt rendered yet!",
-  //       pauseOnHover:true,
-  //       placement:"topLeft"
-  //     })
-  //   }
-  // },[])
  // Update UserState when UserData changes
  useEffect(() => {
   if (UserData && !userError) {
@@ -110,10 +64,10 @@ useEffect(() => {
   }
 }, [UserSentData, UserSentError]);
 
-// Update RecipidentState when RecipientData changes
+// Update RecipientState when RecipientData changes
 useEffect(() => {
   if (RecipientData && !RecipientError && activeUserId) {
-    SetRecipidentState((prevState) => ({
+    SetRecipientState((prevState) => ({
       ...prevState,
       [activeUserId]: RecipientData.data,
     }));
@@ -150,23 +104,6 @@ useEffect(() => {
     }
   }, [activeUserId && MessagesCache[activeUserId]]);
 
-// probs
-
-  // const [sellerInfor, setSellerInfor] = useState<SellerType>();
-  // const [sellerProfile, setSellerProfile] = useState<UserProfileType>();
-  // const [messages, setMessages] = useState<MessageType[]>([]);
-  // const [sellerCache, setSellerCache] = useState<{ [key: number]: UserProfileType }>({});
-  
-  // const { data:UserDataQuery,isError:isErrorQuery} = useGetUserSentQuery();
-
-  // const { data: profileData, isError: profileError, isLoading: profileLoading } = useGetSellerProfileQuery(activeUserId, {
-  //   skip: !activeUserId
-  // });
-  
-  // const { data: UserData, isError: userError } = useGetProfileQuery();
-  
-  
-// console.log(MessagesData);
 
 useEffect(() => {
     // khi co socket va thong tin user, se lang nghe tin nhan tu nguoi dung khac
@@ -192,10 +129,10 @@ useEffect(() => {
               }));
               
             }else{
-              console.log("Notifi : you recei a message from ",content.sender )
+              console.log("Notifi : you recei a message from ",)
               notification.info({
                 message: 'New message',
-                description: 'cos tin nhawns mowis kia =)))',
+                description: `cos tin nhawns mowis kia =))) , from ${content.sender }`,
                 placement: 'top'
               })
             }
@@ -206,16 +143,27 @@ useEffect(() => {
 
 
   const sendMessage = () => {
-    if (socket && UserState && RecipidentState && message.trim() && activeUserId) {
+    if (socket && UserState && RecipientState && message.trim() && activeUserId) {
       console.log("activeUserId : " , activeUserId)
       const newMessage : MessageSendType = {
         sender: UserState.user.userId,
-        recipient: RecipidentState[activeUserId].user.userId,
+        recipient: RecipientState[activeUserId].user.userId,
         content: message,
         messageType: 'TEXT',
       }
 
       socket.send(`/app/chatwith/${activeUserId}`, {}, JSON.stringify(newMessage));
+      const completeMessage = {
+        ...newMessage,
+        messageId: Date.now(),
+        createAt: new Date().toISOString(),
+      };
+      // luu tin nhan moi vo client
+      SetMessagesCache(prev => ({
+        ...prev,
+        [activeUserId]: prev[activeUserId] ? [...prev[activeUserId], completeMessage] : [completeMessage]
+      }));
+      
       setMessage('');
     }else{
       notification.warning({
@@ -242,29 +190,6 @@ useEffect(() => {
       if (message.trim()) {
         // Gửi tin nhắn
         sendMessage();
-        // if(UserState && RecipidentState){
-
-        //   // Tạo đối tượng tin nhắn mới
-        //   const newMessage: MessageType = {
-        //     messageId: Date.now(), 
-        //     sender: UserState.user?.userId,
-        //     recipient: RecipidentState.user.userId,
-        //     content: message,
-        //     messageType: 'TEXT', 
-        //     createAt: new Date().toISOString(),
-        //   };
-          
-        //   // Cập nhật danh sách tin nhắn
-        //   // setMessages((prevMessages) => [...prevMessages, newMessage]);
-        // }else{
-        //   notification.warning({
-        //     placement:"topLeft",
-        //     message:"Error relative to Keydown",
-        //     description : "Have error while send a message, like the seller infor didnt exits !"
-
-        //   })
-        // }
-  
         // Xóa nội dung tin nhắn sau khi gửi
         setMessage('');
       }
@@ -279,8 +204,8 @@ useEffect(() => {
       <div className="flex flex-1 bg-cyan-700 h-[90%] pb-3">
         <Sidebar activeUserId={activeUserId} onUserSelect={handleUserSelect} userLists={userListsState} />
         <div className="w-3/4 h-full  flex flex-col">
-          <UserInfo recipident={activeUserId ? RecipidentState[activeUserId]: undefined} />
-          <Messages messages={activeUserId ? MessagesCache[activeUserId] : []} lastMessageRef={lastMessageRef} sender = {UserState} recipident={activeUserId ? RecipidentState[activeUserId]: undefined}  />
+          <UserInfo recipident={activeUserId ? RecipientState[activeUserId]: undefined} />
+          <Messages messages={activeUserId ? MessagesCache[activeUserId] : []} lastMessageRef={lastMessageRef} sender = {UserState} recipident={activeUserId ? RecipientState[activeUserId]: undefined}  />
           <SendMessage
             message={message}
             setMessage={setMessage}
