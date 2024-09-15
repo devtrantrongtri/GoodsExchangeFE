@@ -17,14 +17,15 @@ function HomePage() {
         <div className='mx-96  ' >
         <CarouselCustoms/>
         </div>
-        <div className='mx-96 my-20 bg-slate-50 h-41 rounded-2xl '>
+        <div className='mx-2 my-2 sm:mx-4 sm:my-4 md:mx-8 md:my-8 lg:mx-16 lg:my-16 xl:mx-32 xl:my-32'>
         <Narbar/>
 
         </div>
 
-        <div className='mx-80   my-40 ' >
-        <Products/>
+        <div className='mx-2 my-2 sm:mx-4 sm:my-4 md:mx-8 md:my-8 lg:mx-16 lg:my-16 xl:mx-32 xl:my-32'>
+          <Products/>
         </div>
+
         {/* <div className='mx-96  ' >
         <CarouselCustoms/>
         </div>

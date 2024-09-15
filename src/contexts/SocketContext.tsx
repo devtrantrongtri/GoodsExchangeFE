@@ -3,11 +3,14 @@ import SockJs from "sockjs-client";
 import StompJs from "stompjs";
 
 import { useGetProfileQuery } from "../services/user/user.service"; // Giả sử bạn đang dùng redux toolkit query
+import { notification } from 'antd';
 
 
 const SocketContext = createContext<StompJs.Client | null>(null);
 export default SocketContext;
 export const useSocket = () => useContext(SocketContext);
+
+const token = localStorage.getItem('token'); // Lấy token từ localStorage
 
 
 export const SocketProvider = ({ children} : {children: React.ReactNode}) => {
@@ -19,25 +22,20 @@ export const SocketProvider = ({ children} : {children: React.ReactNode}) => {
     const connectSocket =useCallback(()=>{
 
         if(data?.data.user.userId){
-            const sockjs = new SockJs(import.meta.env.VITE_BASE_SOCKET)
-            const client = StompJs.over(sockjs);
-
-            client.connect({},() => {
-                console.log("connected socket successfully !")
-
-                // subcirbe 
-
-                // client.subscribe(`/queue/${data.data.user.userId}`,(msg) => {
-                //     console.log("Received private message:", msg);
-                // })
-
-                // client.subscribe
-
-
-                // Set client vào state
-                setStompClient(client);
-            });
-        
+          const sockjs = new SockJs(`${import.meta.env.VITE_BASE_SOCKET}?token=${token}`);
+          const client = StompJs.over(sockjs);
+          
+          client.connect({}, () => {
+              console.log("Connected to WebSocket with token in query params");
+              setStompClient(client);
+          });
+      
+        }else{
+          notification.open({
+            message:"Messages",
+            description:"Login to chat !",
+            pauseOnHover:true
+          })
         }
     },[data])
 

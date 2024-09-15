@@ -36,7 +36,8 @@ function Products() {
                 Tin đăng mới nhất
             </h1>
              {/* {loading && <LoadingPopup/>} */}
-            <div className='grid grid-cols-4 gap-8 min-h-96'>
+             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 min-h-96'>
+
                 {response && response.data.content.length > 0 ? (
                     response.data.content.map((product) => (
                         <CardPost key={product.productId} product={product} />

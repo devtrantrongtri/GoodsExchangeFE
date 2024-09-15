@@ -1,48 +1,46 @@
-
 import React, { useState } from 'react';
 import { useGetProfileQuery, useUpdateProfileMutation } from '../../../services/user/user.service';
-import { Card, Form, Input, Button, Avatar, Spin, Alert ,message, Select} from 'antd';
+import { Card, Form, Input, Button, Avatar, Alert, message } from 'antd';
 import LoadingPopup from '../../Util/LoadingPopup';
 
 interface avartar {
-        url: string;
-        label: string;
+  url: string;
+  label: string;
 }
 
 const Profile: React.FC = () => {
-
-  const { data: profileData, isLoading, isError,refetch } = useGetProfileQuery();
-  const [updateProfile,{error,data}] = useUpdateProfileMutation();
+  const { data: profileData, isLoading, isError, refetch } = useGetProfileQuery();
+  const [updateProfile, { error, data }] = useUpdateProfileMutation();
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
+
   const handleUpdate = async (values: any) => {
     try {
-        await updateProfile({
-            user: {
-              email: values.email,
-              phoneNumber: values.phoneNumber,
-              address: values.address,
-            },
-            bio: values.bio,
-            profileImageUrl: selectedAvatar||values.profileImageUrl,
-            firstName: values.firstName,
-            lastName: values.lastName,
-          }).unwrap();
-      if(data){
-        if(data.code === 200) {
-          message.success('Profile updated successfully!');
-        }else{
-
-          message.error('Failed to update profile.' + data.msg);
-        }
-      }
-      refetch();
+      await updateProfile({
+        user: {
+          email: values.email,
+          phoneNumber: values.phoneNumber,
+          address: values.address,
+        },
+        bio: values.bio,
+        profileImageUrl: selectedAvatar || values.profileImageUrl,
+        firstName: values.firstName,
+        lastName: values.lastName,
+      }).unwrap();
+      console.log(data)
+      // if (data && data.code === 200) {
+      //   message.success('Profile updated successfully!');
+      // } else {
+      //   message.error('Failed to update profile. ' + (data?.msg || ''));
+      // }
     } catch (error) {
       console.error('Failed to update profile:', error);
+      console.log('Failed to update profile:', error);
       message.error('Failed to update profile.');
     }
+    refetch();
   };
 
-  if (isLoading) return <LoadingPopup/>;
+  if (isLoading) return <LoadingPopup />;
   if (isError) return <Alert message="Something went wrong." type="error" showIcon className="my-4" />;
 
   return (
@@ -67,68 +65,60 @@ const Profile: React.FC = () => {
               onFinish={handleUpdate}
               layout="vertical"
             >
-              <Form.Item label="Email" name="email" rules={[{ required: true, type: 'email' }]}>
-                <Input />
-              </Form.Item>
-              <Form.Item label="Phone Number" name="phoneNumber">
-                <Input />
-              </Form.Item>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Form.Item label="First Name" name="firstName">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="Last Name" name="lastName">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="Email" name="email" rules={[{ required: true, type: 'email' }]}>
+                  <Input />
+                </Form.Item>
+                <Form.Item label="Phone Number" name="phoneNumber">
+                  <Input />
+                </Form.Item>
+              </div>
+
               <Form.Item label="Address" name="address">
                 <Input />
               </Form.Item>
               <Form.Item label="Bio" name="bio">
                 <Input.TextArea rows={4} />
               </Form.Item>
+
+              {/* Avatar selection */}
               <Form.Item label="Profile Image">
-                <div className="relative rounded-xl overflow-auto">
-                  <div className="max-w- mx-auto   min-w-0 ">
-                    <div className="overflow-x-auto flex">
-                    {profileData.data.profileImageUrl && profileData.data.firstName && profileData.data.lastName && <div
-                         
-                         className={`flex-none py-6 px-3 first:pl-6 last:pr-6 `}
-                       >
-                         <div
-                           className="flex flex-col items-center justify-center gap-3 cursor-pointer"
-                           onClick={() => setSelectedAvatar(profileData.data.profileImageUrl)}
-                         >
-                           <img
-                             className={`w-16 h-16 rounded-full ${selectedAvatar === profileData.data.profileImageUrl ? 'transform scale-110 border-4 border-blue-500' : ''}`}
-                             src={profileData.data.profileImageUrl}
-                             alt={profileData.data.firstName}
-                           />
-                           <strong className="text-slate-900 text-xs font-mediu">old avatar</strong>
-                         </div>
-                       </div>}
-                      {avatarOptions.map((avatar) => (
-                        <div
-                          key={avatar.url}
-                          className={`flex-none py-6 px-3 first:pl-6 last:pr-6`}
-                        >
-                          <div
-                            className="flex flex-col items-center justify-center gap-3 cursor-pointer"
-                            onClick={() => setSelectedAvatar(avatar.url)}
-                          >
-                            <img
-                              className={`w-16 h-16 rounded-full ${selectedAvatar === avatar.url ? 'transform scale-110 border-4 border-blue-500' : ''}`}
-                              src={avatar.url}
-                              alt={avatar.label}
-                            />
-                            <strong className="text-slate-900 text-xs font-medium">{avatar.label}</strong>
-                          </div>
-                        </div>
-                      ))}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {profileData.data.profileImageUrl && (
+                    <div className="flex flex-col items-center cursor-pointer" onClick={() => setSelectedAvatar(profileData.data.profileImageUrl)}>
+                      <img
+                        className={`w-16 h-16 rounded-full ${selectedAvatar === profileData.data.profileImageUrl ? 'transform scale-110 border-4 border-blue-500' : ''}`}
+                        src={profileData.data.profileImageUrl}
+                        alt="current avatar"
+                      />
+                      <strong className="text-slate-900 text-xs font-medium mt-2">Old Avatar</strong>
                     </div>
-                  </div>
+                  )}
+                  {avatarOptions.map((avatar) => (
+                    <div
+                      key={avatar.url}
+                      className="flex flex-col items-center cursor-pointer"
+                      onClick={() => setSelectedAvatar(avatar.url)}
+                    >
+                      <img
+                        className={`w-16 h-16 rounded-full ${selectedAvatar === avatar.url ? 'transform scale-110 border-4 border-blue-500' : ''}`}
+                        src={avatar.url}
+                        alt={avatar.label}
+                      />
+                      <strong className="text-slate-900 text-xs font-medium mt-2">{avatar.label}</strong>
+                    </div>
+                  ))}
                 </div>
               </Form.Item>
-              <Form.Item label="First Name" name="firstName">
-                <Input />
-              </Form.Item>
-              <Form.Item label="Last Name" name="lastName">
-                <Input />
-              </Form.Item>
+
               <Form.Item>
-                <Button type="primary" htmlType="submit">Update Profile</Button>
+                <Button type="primary" htmlType="submit" className="w-full md:w-auto">Update Profile</Button>
               </Form.Item>
             </Form>
           </Card>

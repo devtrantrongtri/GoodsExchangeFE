@@ -27,7 +27,7 @@ function SellerInfor({ seller }: { seller: SellerType }) {
   const profileImageUrl = profile?.profileImageUrl || 'https://via.placeholder.com/150';
 
   return (
-    <div className='flex flex-row py-10'>
+    <div className='col-span-1 md:flex md:flex-row py-10'>
       {/* Thông tin người dùng */}
       
       <Card
@@ -57,7 +57,7 @@ function SellerInfor({ seller }: { seller: SellerType }) {
         <h2 className="text-lg font-bold mb-4">Posted Products of {fullname}</h2>
         <div className="flex overflow-x-auto space-x-4">
           {postOfUser?.map((product) => (
-            <div className="min-w-[350px] h-96" key={product.productId}>
+            <div className="min-w-[350px]" key={product.productId}>
               <CardPost product={product} />
             </div>
           ))}
