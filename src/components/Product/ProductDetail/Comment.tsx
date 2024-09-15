@@ -47,7 +47,7 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
       <div className="flex flex-col gap-5 m-3">
         {comments?.data ? (
           comments.data.map((comment: Comment) => (
-            <CommentItem key={comment.comment_id} comment={comment} />
+            <CommentItem key={comment.comment_id} comment={comment} refetch={refetch} postId={postId} />
           ))
         ) : (
           <p>No comments yet.</p>

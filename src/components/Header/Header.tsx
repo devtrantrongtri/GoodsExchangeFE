@@ -12,6 +12,7 @@ import {  Alert, Button, Dropdown, Menu, MenuProps, Spin } from "antd";
 // import {  MoreOutlined,  } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useGetProfileQuery } from "../../services/user/user.service";
+import HPost from "./HPost";
 
 function Header() {
   const scrollPosition = useScrollPosition();
@@ -103,7 +104,15 @@ function Header() {
             data-tooltip-content="Notification ! "
           >
             <Notification />
+            
           </div>
+          <div
+          className=""
+          data-tooltip-id="my-tooltip"
+          data-tooltip-content="Post?">
+            <HPost/>
+          </div>
+          
           <div
             className=""
             // data-tooltip-id="my-tooltip"
