@@ -103,7 +103,7 @@ export interface ProductFormData {
   title: string;
   description: string;
   price: number;
-  status: "AVAILABLE" | "SOLD_OUT" | "UNAVAILABLE" | "BANNED";
+  status: "AVAILABLE" | "SOLD" | "UNAVAILABLE" | "BANNED";
 }
 
 export interface Comment {

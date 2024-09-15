@@ -1,50 +1,46 @@
-import React, { useEffect, useState } from "react";
-import useAxios from "../../hooks/useAxios";
+import React, { useState } from "react";
 import SkeletonLoader from "./SkeletonLoader";
+import {
+  useChangeInfoProductMutation,
+  useChangeProductStatusMutation,
+  useDeleteProductMutation,
+  useGetAllProductsWithImagesQuery,
+} from "../../services/product/product.service";
+import { ProductFormData } from "../../types/Product/PostProb";
+import EditProductModal from "./EditProductModal";
+import { notification } from "antd";
 
 interface ProductData {
   productId: number;
   title: string;
   description: string;
   price: number;
-  status: "AVAILABLE" | "SOLD_OUT" | "DISCONTINUED";
+  status: "AVAILABLE" | "SOLD" | "UNAVAILABLE" | "BANNED";
   created_at: number;
   imageUrls: string[];
 }
 
 const Product: React.FC = () => {
-  const { response, error, loading, fetchData } = useAxios<ProductData[]>();
   const [currentPage, setCurrentPage] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [dataFetched, setDataFetched] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [editingProduct, setEditingProduct] = useState(0);
   const productsPerPage = 10;
 
-  useEffect(() => {
-    const fetchProductData = async () => {
-      try {
-        if (!dataFetched) {
-          await fetchData({
-            url: "products/with-images",
-            method: "GET",
-          });
-          setDataFetched(true);
-        }
-      } catch (err) {
-        console.error("Error fetching product data:", err);
-      }
-    };
-    fetchProductData();
-  }, [dataFetched, fetchData]);
+  const { data, error, isLoading, refetch } =
+    useGetAllProductsWithImagesQuery();
+  const [changeProductStatus] = useChangeProductStatusMutation();
+  const [deleteProduct] = useDeleteProductMutation();
+
+  const products = data?.data || [];
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
     if (!selectAll) {
-      const allProductIds = (response?.data || []).map(
-        (product) => product.productId
-      );
+      const allProductIds = products.map((product) => product.productId);
       setSelectedProducts(allProductIds);
     } else {
       setSelectedProducts([]);
@@ -52,34 +48,69 @@ const Product: React.FC = () => {
   };
 
   const toggleSelectProduct = (productId: number) => {
-    if (selectedProducts.includes(productId)) {
-      setSelectedProducts(selectedProducts.filter((id) => id !== productId));
-    } else {
-      setSelectedProducts([...selectedProducts, productId]);
-    }
+    setSelectedProducts((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
+    );
   };
 
   const handlePageChange = (newPage: number) => {
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
     if (newPage >= 0 && newPage < totalPages) {
       setCurrentPage(newPage);
     }
   };
 
-  const handleProductAdded = () => {
-    setDataFetched(false); // Reset the state to allow refetching
-  };
-
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(0); // Reset page to 0 on search
+    setCurrentPage(0);
   };
 
-  if (loading) return <SkeletonLoader />;
-  if (error) return <p>Error: {error}</p>;
+  const handleAcceptProduct = async (productId: number) => {
+    try {
+      await changeProductStatus({
+        id: productId,
+        status: "AVAILABLE",
+      }).unwrap();
+      refetch();
+    } catch (error) {
+      console.error("Error updating product status:", error);
+    }
+  };
 
-  const filteredProducts = (response?.data || []).filter((product) =>
-    product.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleDeleteProduct = async (productId: number) => {
+    try {
+      await deleteProduct(productId);
+      refetch();
+      notification.success({
+        message: "Xóa thành công",
+      });
+    } catch (error) {
+      notification.error({
+        message: "" + error,
+      });
+    }
+  };
+
+  const handleStatusFilterChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    refetch();
+    setStatusFilter(e.target.value as ProductData["status"] | "");
+    setCurrentPage(0);
+  };
+
+  if (isLoading) return <SkeletonLoader />;
+  if (error) return <p>Lỗi!!!!</p>;
+
+  const filteredProducts = products
+    .filter((product) =>
+      product.title.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .filter((product) =>
+      statusFilter ? product.status === statusFilter : true
+    );
 
   // Calculate pagination
   const indexOfLastProduct = (currentPage + 1) * productsPerPage;
@@ -92,7 +123,7 @@ const Product: React.FC = () => {
   // Total number of pages
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-  const formatDateFromTimestamp = (timestamp: number) => {
+  const formatDateFromTimestamp = (timestamp: number): string => {
     const date = new Date(timestamp * 1000);
     return date.toLocaleString();
   };
@@ -108,7 +139,7 @@ const Product: React.FC = () => {
           >
             Search
           </label>
-          <div className="relative">
+          <div className="relative flex">
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
               <svg
                 className="w-4 h-4 text-gray-500 light:text-gray-400"
@@ -135,16 +166,19 @@ const Product: React.FC = () => {
               placeholder="Search product..."
               required
             />
+            <select
+              value={statusFilter}
+              onChange={handleStatusFilterChange}
+              className="ml-4 p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white"
+            >
+              <option value="">All Status</option>
+              <option value="AVAILABLE">Available</option>
+              <option value="SOLD">Sold</option>
+              <option value="UNAVAILABLE">Unavailable</option>
+              <option value="BANNED">Banned</option>
+            </select>
           </div>
         </form>
-
-        <button
-          type="button"
-          onClick={() => setIsModalOpen(true)}
-          className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 light:focus:ring-blue-800 shadow-lg shadow-blue-500/50 light:shadow-lg light:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2 h-auto text-center me-2 mb-2"
-        >
-          Add product
-        </button>
       </div>
 
       <div className="relative overflow-x-auto">
@@ -239,15 +273,29 @@ const Product: React.FC = () => {
                     {formatDateFromTimestamp(product.created_at)}
                   </td>
                   <td className="px-6 py-4">
+                    {product.status === "UNAVAILABLE" && (
+                      <a
+                        href="#"
+                        className="font-medium text-green-600 light:text-green-500 hover:underline me-3"
+                        onClick={() => handleAcceptProduct(product.productId)}
+                      >
+                        Accept
+                      </a>
+                    )}
                     <a
                       href="#"
-                      className="font-medium text-blue-600 light:text-blue-500 hover:underline"
+                      className="font-medium text-blue-600 light:text-blue-500 hover:underline me-3"
+                      onClick={() => {
+                        setIsModalOpen(true);
+                        setEditingProduct(product.productId);
+                      }}
                     >
                       Edit
                     </a>
                     <a
                       href="#"
-                      className="font-medium text-red-600 light:text-red-500 hover:underline ms-3"
+                      className="font-medium text-red-600 light:text-red-500 hover:underline"
+                      onClick={() => handleDeleteProduct(product.productId)}
                     >
                       Remove
                     </a>
@@ -313,6 +361,13 @@ const Product: React.FC = () => {
           </li>
         </ul>
       </nav>
+
+      <EditProductModal
+        isOpen={isModalOpen}
+        postId={editingProduct}
+        onClose={() => setIsModalOpen(false)}
+        refetch={refetch}
+      />
     </div>
   );
 };
