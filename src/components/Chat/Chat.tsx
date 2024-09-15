@@ -38,6 +38,7 @@ const Chat = () => {
   const { data: UserData, isError: userError } = useGetProfileQuery();
   // get particular recipident profile 
   const { data: RecipientData, isError: RecipientError, isLoading: RecipientLoading } = useGetSellerProfileQuery(activeUserId ? activeUserId : skipToken);
+  const { data: RecipientDataNew, isError: RecipientErrorNew, isLoading: RecipientLoadingNew } = useGetSellerProfileQuery(recipient ? recipient.userId : skipToken);
   // get users list exits or sent eachothers
   const { data:UserSentData,isError:UserSentError} = useGetUserSentQuery();
   
@@ -63,6 +64,39 @@ useEffect(() => {
     console.error(UserSentError);
   }
 }, [UserSentData, UserSentError]);
+
+useEffect(() => {
+  // Kiểm tra xem có dữ liệu recipient mới và không có lỗi không
+  if (RecipientDataNew && !RecipientErrorNew && activeUserId) {
+    const newRecipient = RecipientDataNew.data;
+    const recipientId = newRecipient.user.userId;
+
+    // Kiểm tra xem recipient đã tồn tại trong UserSentData hay chưa
+    const isInUserSent = UserSentData?.data.some((user: UserProfileType) => user.user.userId === recipientId);
+
+    if (!isInUserSent) {
+      // Thêm recipient mới vào userListsState
+      setUserListsState((prev) => {
+        // Tránh thêm nếu userListsState chưa được khởi tạo
+        if (!prev) return [newRecipient];
+        
+        // Kiểm tra xem recipient đã tồn tại trong userListsState chưa để tránh trùng lặp
+        const exists = prev.some((user) => user.user.userId === recipientId);
+        if (!exists) {
+          return [...prev, newRecipient];
+        }
+        return prev;
+      });
+
+      // Tùy chọn: Thông báo cho người dùng rằng recipient mới đã được thêm
+      notification.success({
+        message: 'Recipient Added',
+        description: `Đã thêm ${newRecipient.user.username} vào danh sách người dùng tạm thời.`,
+        placement: 'topLeft',
+      });
+    }
+  }
+}, []);
 
 // Update RecipientState when RecipientData changes
 useEffect(() => {
@@ -108,7 +142,6 @@ useEffect(() => {
   // check lastest message.
   useEffect(() => {
     if (activeUserId && MessagesCache[activeUserId]) {
-      console.log("effect 5 ===========check lastest message================");
       if (lastMessageRef.current) {
         lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
       }
