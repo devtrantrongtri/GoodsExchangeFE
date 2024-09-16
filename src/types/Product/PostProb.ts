@@ -75,7 +75,7 @@ interface Pageable {
   paged: boolean;
   unpaged: boolean;
 }
-export interface PaginatedProductsResponse {
+export interface PaginatedProductsData {
   content: ProductType[];
   pageable: Pageable;
   last: boolean;
@@ -125,3 +125,11 @@ export interface CommentRequest {
   userId: string;
   message: string;
 }
+
+export interface APIResponse<T> {
+  code: number;
+  msg: string;
+  data: T;
+}
+
+export type PaginatedProductsResponse = APIResponse<PaginatedProductsData>;
