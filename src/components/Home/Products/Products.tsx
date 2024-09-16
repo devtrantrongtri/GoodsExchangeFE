@@ -43,7 +43,7 @@ function Products() {
         console.log("currentPage : ",currentPage)
         setCurrentPage(page);
     };
-console.log("data :",response)
+console.log("data 1231:",response)
     return (
         <div>
             {error && <ErrorPopup message={ 'Error occurred!'} />}
@@ -57,7 +57,9 @@ console.log("data :",response)
                     ))
                 ) : (
                     response && response?.data?.content?.length > 0 ? ( // Sử dụng optional chaining để tránh lỗi
-                        response.data.content.map((product: ProductType) => (
+                        response.data.content
+                        .filter((product: ProductType) => product.status === 'AVAILABLE')
+                        .map((product: ProductType) => (
                             <CardPost key={product.productId} product={product} />
                         ))
                     ) : (
