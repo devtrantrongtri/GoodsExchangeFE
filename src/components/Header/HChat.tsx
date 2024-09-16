@@ -40,9 +40,9 @@ const HChat = () => {
         />
       </svg>
       {/* Badge for count */}
-      <span className='absolute top-0 right-0 inline-flex items-center justify-center w-6 h-6 p-1 text-xs font-medium text-white bg-red-500 rounded-full'>
-        +99
-      </span>
+      {/* <span className='absolute top-0 right-0 inline-flex items-center justify-center w-6 h-6 p-1 text-xs font-medium text-white bg-red-500 rounded-full'>
+        
+      </span> */}
     </div>
       </Link>
 

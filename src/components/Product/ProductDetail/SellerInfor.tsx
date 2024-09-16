@@ -1,9 +1,10 @@
 import React from 'react';
-import { Card, Avatar, Descriptions, Spin, Alert } from 'antd';
-import { SellerType } from '../../../types/Product/PostProb';
+import { Card, Avatar, Descriptions, Spin, Alert, Badge } from 'antd';
+import { ProductType, SellerType } from '../../../types/Product/PostProb';
 import { useGetSellerProfileQuery } from '../../../services/user/user.service';
 import { useGetAllPostedQuery } from '../../../services/product/product.service';
 import CardPost from '../../Home/Products/CardPost';
+import { getStatusColor } from '../../Util/getStatusColor';
 
 function SellerInfor({ seller }: { seller: SellerType }) {
   // Fetch seller profile
@@ -56,9 +57,16 @@ function SellerInfor({ seller }: { seller: SellerType }) {
       <div className='w-full md:w-2/3 p-4'>
         <h2 className="text-lg font-bold mb-4">Posted Products of {fullname}</h2>
         <div className="flex overflow-x-auto space-x-4">
-          {postOfUser?.map((product) => (
+          {postOfUser && postOfUser
+          .filter((product: ProductType) => product.status === 'AVAILABLE')
+          .map((product) => (
             <div className="min-w-[350px]" key={product.productId}>
-              <CardPost product={product} />
+              <Badge.Ribbon
+                text={product.status}
+                color={getStatusColor(product.status)} // Lấy màu dựa trên trạng thái sản phẩm
+              >
+                <CardPost product={product} />
+              </Badge.Ribbon>
             </div>
           ))}
         </div>
