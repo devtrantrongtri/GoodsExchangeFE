@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { ReportResponse } from "../../types/Product/PostProb";
+import { ReportReq, ReportResponse } from "../../types/Product/PostProb";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
@@ -19,6 +19,16 @@ export const reportApi = createApi({
         getAllReport: build.query<ReportResponse, void>({
             query: () => `reports`,
         }),
+        createReport: build.mutation<ReportResponse, ReportReq>({
+            query: (reportReq) => ({
+              url: 'reports',
+              method: 'POST',
+              body: reportReq,
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }),
+          }),
         changeReportStatus: build.mutation<string, { id: number; status: string }>({
             query: ({ id, status }) => ({
                 url: `reports/${id}/status`,
@@ -32,4 +42,5 @@ export const reportApi = createApi({
 export const {
     useGetAllReportQuery,
     useChangeReportStatusMutation,
+    useCreateReportMutation,
 } = reportApi;

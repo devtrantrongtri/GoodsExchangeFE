@@ -27,7 +27,6 @@ const Product: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [editingProduct, setEditingProduct] = useState(0);
-  const [refresh, setRefresh] = useState(0);
   const productsPerPage = 10;
 
   const { data, error, isLoading, refetch } =

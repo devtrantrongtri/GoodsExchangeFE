@@ -155,6 +155,14 @@ export interface Report {
   status: string;
 }
 
+export interface ReportReq {
+  product_id: number;
+  report_by: number;
+  report_reason: string;
+  report_title: string;
+  report_img: File;
+}
+
 export interface ReportResponse {
   code: number;
   msg: string;
