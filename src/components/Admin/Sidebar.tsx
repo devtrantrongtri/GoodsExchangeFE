@@ -37,13 +37,14 @@ const SideBar: React.FC<SideBarProps> = ({ role }) => {
   const { Title } = Typography;
 
   const [collapse, setCollapse] = useState<boolean>(false);
-  const [currentComponent, setCurrentComponent] = useState<string>("dashboard");
+  const check = role === "admin" ? "dashboard" : "report"
+  const [currentComponent, setCurrentComponent] = useState<string>(check);
 
   const components: { [key: string]: JSX.Element } = {
     dashboard: role === "admin" ? <Dashboard /> : <></>,
     user: role === "admin" ? <User /> : <></>,
     product: role === "admin" ? <Product /> : <></>,
-    report: role === "admin" || role === "moderator" ? <Report /> : <></>,
+    report: role === "admin" || role === "mod" ? <Report /> : <></>,
   };
 
   const items: MenuItem[] = [
@@ -85,7 +86,7 @@ const SideBar: React.FC<SideBarProps> = ({ role }) => {
             backgroundColor: "rgb(207 250 254)",
             color: "black",
           }}
-          defaultSelectedKeys={["dashboard"]}
+          defaultSelectedKeys={[(role == "admin") ? "dashboard" : "report"]}
           mode="inline"
           inlineCollapsed={collapse}
           items={items}
@@ -128,7 +129,7 @@ const SideBar: React.FC<SideBarProps> = ({ role }) => {
                   </b>
                   <Title className="text-gray-500">
                     <p className="text-xs">
-                      {profileData ? profileData.data.user.roles : ""}
+                      {profileData ? profileData.data.user.roles.split(",")[0] : ""}
                     </p>
                   </Title>
                 </Title>

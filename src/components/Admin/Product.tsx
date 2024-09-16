@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SkeletonLoader from "./SkeletonLoader";
 import {
   useChangeInfoProductMutation,
@@ -6,7 +6,6 @@ import {
   useDeleteProductMutation,
   useGetAllProductsWithImagesQuery,
 } from "../../services/product/product.service";
-import { ProductFormData } from "../../types/Product/PostProb";
 import EditProductModal from "./EditProductModal";
 import { notification } from "antd";
 
@@ -28,6 +27,7 @@ const Product: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [editingProduct, setEditingProduct] = useState(0);
+  const [refresh, setRefresh] = useState(0);
   const productsPerPage = 10;
 
   const { data, error, isLoading, refetch } =
@@ -73,7 +73,7 @@ const Product: React.FC = () => {
         id: productId,
         status: "AVAILABLE",
       }).unwrap();
-      refetch();
+      await refetch();
     } catch (error) {
       console.error("Error updating product status:", error);
     }

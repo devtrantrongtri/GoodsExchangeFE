@@ -53,6 +53,7 @@ export const productApi = createApi({
                 url: `products/${id}/status`,
                 method: 'PUT',
                 params: { status },
+                responseHandler: (response) => response.text(),
             }),
         }),
         deleteProduct: build.mutation<string, number>({
