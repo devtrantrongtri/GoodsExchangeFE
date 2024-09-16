@@ -50,7 +50,7 @@ const Chat = () => {
   const { data: RecipientData, isError: RecipientError, isLoading: RecipientLoading } = useGetSellerProfileQuery(activeUserId ? activeUserId : skipToken);
   const { data: RecipientDataNew, isError: RecipientErrorNew, isLoading: RecipientLoadingNew } = useGetSellerProfileQuery(recipient ? recipient.userId : skipToken);
   // get users list exits or sent eachothers
-  const { data:UserSentData,isError:UserSentError} = useGetUserSentQuery();
+  const { data:UserSentData,isError:UserSentError,isLoading:UserSentLoading} = useGetUserSentQuery();
   const [unreadCounts, setUnreadCounts] = useState<{ [key: number]: number }>({});
 // init data for User,Particular Recipident, Messages if true.
  // Update UserState when UserData changes
@@ -307,12 +307,12 @@ useEffect(() => {
     }
   };
   
-  if (loadingState) {
+  if (messagesLoading || RecipientLoading  || RecipientLoadingNew || UserSentLoading) {
       return (
         <div className="flex flex-col justify-center items-center h-screen bg-gray-100">
           {/* Loading spinner */}
           <Spin size="large" className="mb-8">
-            <h1 className="font-bold text-red-700 text-4xl capitalize">You have to login to chat</h1>
+            <h1 className="font-bold text-red-700 text-4xl capitalize">Loading ... or have some error</h1>
           </Spin>
     
           {/* Link to go home */}
