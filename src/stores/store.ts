@@ -8,6 +8,8 @@ import chatReducer from "./slices/chat.slice";
 import { chatApi } from "../services/chat/chat.service";
 import commentSlice from "./slices/comment.slice";
 import { commentApi } from "../services/Comment/comment.service";
+import wishListReducer from "./slices/wishList.slice";
+import { wishListApi } from "../services/WishList/wishList.service";
 
 export const store = configureStore({
     reducer : {
@@ -15,14 +17,16 @@ export const store = configureStore({
         product: productReducer,
         chat: chatReducer,
         comment: commentSlice,
+        wishList: wishListReducer,
         [userApi.reducerPath]: userApi.reducer, // Using reducer from userApi
         [productApi.reducerPath]: productApi.reducer, // Add productApi.reducer
         [chatApi.reducerPath]: chatApi.reducer, // Add chatAPI.reducer
         [commentApi.reducerPath]: commentApi.reducer,
+        [wishListApi.reducerPath]: wishListApi.reducer,
     },
     // Add middleware for API features like caching, invalidation, polling
     middleware(getDefaultMiddleware) {
-        return getDefaultMiddleware().concat(userApi.middleware, productApi.middleware,chatApi.middleware,commentApi.middleware); // Add productApi middleware
+        return getDefaultMiddleware().concat(userApi.middleware, productApi.middleware,chatApi.middleware,commentApi.middleware,wishListApi.middleware); // Add productApi middleware
     },
 })
 
