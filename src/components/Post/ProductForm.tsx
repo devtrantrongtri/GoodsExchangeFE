@@ -4,7 +4,7 @@ import { CategoryType } from "../../types/Product/PostProb";
 import { Button, Spin } from "antd";
 
 interface ProductFormProps {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: FormData) => void;
   isLoading: boolean;
 }
 
@@ -14,74 +14,76 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, isLoading }) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
 
   const { response, fetchData } = useAxios<CategoryType[]>();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setSelectedFile(e.target.files[0]);
+      setSelectedFiles(e.target.files);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const data = {
-      category_id: categoryId,
-      title: title,
-      description: description,
-      price: price,
-      image: selectedFile,
-      status: "UNAVAILABLE",
-    };
+    const formData = new FormData();
+    formData.append("category_id", String(categoryId));
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("price", String(price));
 
-    onSubmit(data);
+    if (selectedFiles) {
+      Array.from(selectedFiles).forEach((file) => {
+        formData.append("images", file);
+      });
+    }
+
+    onSubmit(formData);
   };
 
   useEffect(() => {
-    if (categories.length === 0) {
-      const fetchCategories = async () => {
-        try {
-          await fetchData({
-            url: "category/get_all_categories",
-            method: "GET",
-          });
-          if (response) {
-            setCategories(response.data);
-          }
-        } catch (err) {
-          console.error("Error fetching categories:", err);
+    const fetchCategories = async () => {
+      try {
+        await fetchData({
+          url: "category/get_all_categories",
+          method: "GET",
+        });
+        if (response) {
+          setCategories(response.data);
         }
-      };
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
+    };
 
+    if (categories.length === 0) {
       fetchCategories();
     }
-  }, [response, categories.length]);
+  }, [categories.length, fetchData, response]);
 
   return (
-    <form onSubmit={handleSubmit} encType="multipart/form-data" className="flex">
+    <form onSubmit={handleSubmit} encType="multipart/form-data" className="flex flex-col md:flex-row gap-6">
       {/* Ảnh */}
-      <div className="w-full max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg space-y-4">
-        <label htmlFor="">Ảnh</label>
+      <div className="w-full md:w-1/3 bg-white p-6 rounded-lg shadow-lg space-y-4">
+        <label className="block text-sm font-medium text-gray-700 mb-2">Ảnh sản phẩm</label>
         <div className="flex items-center justify-center w-full">
           <label
             htmlFor="dropzone-file"
             className={`flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer ${
-              selectedFile
+              selectedFiles && selectedFiles.length > 0
                 ? "bg-green-200 hover:bg-green-300"
                 : "bg-gray-200 hover:bg-gray-300"
             }`}
           >
             <div className="flex flex-col items-center justify-center pt-5 pb-6">
-              {selectedFile ? (
+              {selectedFiles && selectedFiles.length > 0 ? (
                 <>
                   <p className="mb-2 text-sm text-green-600">
-                    File selected:{" "}
-                    <span className="font-semibold">{selectedFile.name}</span>
+                    {selectedFiles.length} file(s) selected
                   </p>
                   <p className="text-xs text-green-500">
-                    You can change the file by clicking here again.
+                    You can change the files by clicking here again.
                   </p>
                 </>
               ) : (
@@ -114,9 +116,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, isLoading }) => {
             <input
               id="dropzone-file"
               type="file"
-              name="image"
+              name="images"
               accept="image/*"
               className="hidden"
+              multiple
               onChange={handleFileChange}
               required
             />
@@ -124,23 +127,49 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, isLoading }) => {
         </div>
       </div>
 
-      <div className="w-full max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg space-y-4">
-        <div>
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-            required
-          />
+      <div className="w-full md:w-2/3 bg-white p-6 rounded-lg shadow-lg space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Title
+            </label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+              required
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="category_id"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Category
+            </label>
+            <select
+              id="category_id"
+              name="category_id"
+              value={categoryId}
+              onChange={(e) => setCategoryId(parseInt(e.target.value))}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+              required
+            >
+              <option value="">Select a category</option>
+              {categories.map((category) => (
+                <option key={category.categoryId} value={category.categoryId}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div>
@@ -174,37 +203,18 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, isLoading }) => {
             name="price"
             value={price}
             onChange={(e) => setPrice(parseFloat(e.target.value))}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+            className="w-[25%] mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
             required
           />
         </div>
 
-        <div>
-          <label
-            htmlFor="category_id"
-            className="block text-sm font-medium text-gray-700"
+        <div className="pt-4 flex justify-end">
+          <Button 
+            type="primary" 
+            htmlType="submit" 
+            disabled={isLoading} 
+            className="w-[10%] h-10 text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           >
-            Category
-          </label>
-          <select
-            id="category_id"
-            name="category_id"
-            value={categoryId}
-            onChange={(e) => setCategoryId(parseInt(e.target.value))}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-            required
-          >
-            <option value="">Select a category</option>
-            {categories.map((category) => (
-              <option key={category.categoryId} value={category.categoryId}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex justify-end mt-4">
-          <Button type="primary" htmlType="submit" disabled={isLoading}>
             {isLoading ? <Spin /> : "Submit"}
           </Button>
         </div>
