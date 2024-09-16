@@ -132,4 +132,33 @@ export interface APIResponse<T> {
   data: T;
 }
 
+interface ProductReport {
+  productId: number;
+  title: string;
+  description: string;
+  price: number;
+  status: "AVAILABLE" | "SOLD_OUT" | "DISCONTINUED";
+  create_at: number; // Timestamp in milliseconds
+}
+
+export interface Report {
+  report_id: number;
+  reportedBy: User;
+  product: {
+    product_id: number;
+    title: string;
+  };
+  reportTitle: string;
+  reportReason: string;
+  reportImg: string;
+  report_date: number;
+  status: string;
+}
+
+export interface ReportResponse {
+  code: number;
+  msg: string;
+  data: Report[];
+}
+
 export type PaginatedProductsResponse = APIResponse<PaginatedProductsData>;
