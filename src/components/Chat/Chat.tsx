@@ -34,8 +34,10 @@ const Chat = () => {
     } else if (userListsState && userListsState.length > 0) {
       // Nếu không có recipient, chọn người dùng đầu tiên trong danh sách làm activeUserId mặc định
       setActiveUserId(userListsState[0].user.userId);
+    }else{
+      setActiveUserId(0);
     }
-  }, [recipient, userListsState]);
+  }, [recipient, userListsState])
   // NOTE : QUERY
   // Query message for each recipident.
   const { data: MessagesData, error: messagesError, isLoading: messagesLoading, refetch: refetchMessageList } = useGetMessagesQuery(
