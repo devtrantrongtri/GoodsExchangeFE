@@ -108,20 +108,26 @@ function Header() {
           <div className="sticky">
           <SeachBar />
           <div className="flex">
-          <HChat />
-          <HWishList />
-          <Notification />
-          <HPost/>
-          <HProfile
-            avatar={
-              profileData
+            {isAuthen && !isError ? (
+              <>
+              <HChat />
+              <HWishList />
+              <Notification />
+              <HPost/>
+              <HProfile
+              
+              avatar={
+                profileData
                 ? { 
-                    avartar: profileData.data.profileImageUrl || 'https://secure.gravatar.com/avatar/f53779b5676d15e4a7aeeef9c81fa564?s=70&d=wavatar&r=g',
-                    name: profileData.data.firstName || profileData.data.user.username
-                  }
+                  avartar: profileData.data.profileImageUrl || 'https://secure.gravatar.com/avatar/f53779b5676d15e4a7aeeef9c81fa564?s=70&d=wavatar&r=g',
+                  name: profileData.data.firstName || profileData.data.user.username
+                }
                 : null
-            }
-          />
+              }
+              />
+              </>
+
+            ) : null}
           </div>
           </div>
         </div>

@@ -1,5 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { ProductDetailResponse, ProductFormData, ProductResponse, ProductSellerResponse } from '../../types/Product/PostProb';
+
+import { PaginatedProductsResponse, ProductDetailResponse, ProductFormData, ProductResponse, ProductSellerResponse } from '../../types/Product/PostProb';
+
+// import { PaginatedProductsResponse, ProductDetailResponse, ProductResponse, ProductSellerResponse } from '../../types/Product/PostProb';
+
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
@@ -20,12 +24,13 @@ export const productApi = createApi({
         },
     }),
     endpoints: (build) => ({
-        getAllProductsWithImagesWithSortAndPaging: build.mutation<ProductResponse, { offset: number; pageSize: number; order: string; field: string }>({
+
+        getAllProductsWithSortAndPaging: build.mutation<PaginatedProductsResponse, { offset: number, pageSize: number, order: string, field: string }>({
             query: (body) => ({
                 url: 'products/getAllProductsWithImagesWithSortAndPaging',
-                method: 'POST', // Changing the method to POST
-                body, // Passing the request body
-            }),
+                method: 'POST',
+                body
+            })
         }),
         getProductDetail: build.query<ProductDetailResponse, string>({
             query: (id) => `products/getProductDetail/${id}`
@@ -60,7 +65,7 @@ export const productApi = createApi({
 });
 
 export const {
-    useGetAllProductsWithImagesWithSortAndPagingMutation,
+    useGetAllProductsWithSortAndPagingMutation,
     useGetProductDetailQuery,
     useGetAllPostedQuery,
     useGetAllProductsWithImagesQuery,

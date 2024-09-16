@@ -1,7 +1,9 @@
 // src/components/Notification.js
 import React from 'react';
+import { Link } from 'react-router-dom';
 const HChat = () => {
   return (
+      <Link to="/chat">
     <div className='relative p-2 cursor-pointer flex items-center'>
       {/* SVG Icon */}
       <svg
@@ -42,6 +44,7 @@ const HChat = () => {
         +99
       </span>
     </div>
+      </Link>
 
   );
 };
